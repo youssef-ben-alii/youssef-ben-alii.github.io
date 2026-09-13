@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page Not Found — Mondo Medical</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<style>
+  .lang-block{display:none}
+  .lang-block.show{display:block}
+</style>
+</head>
+<body>
+<main>
+  <div class="container error-page">
+    <div>
+      <div class="code">404</div>
+      <div class="lang-block" id="block-en">
+        <h1 class="h-lg" style="margin-top:10px">Page not found.</h1>
+        <p class="lede" style="margin:14px auto 0">Sorry, the page you're looking for doesn't exist.</p>
+        <div style="margin-top:28px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+          <a href="/en/" class="btn btn-primary">Back to Home (EN)</a>
+          <a href="/fr/" class="btn btn-ghost">Accueil (FR)</a>
+        </div>
+      </div>
+      <div class="lang-block" id="block-fr">
+        <h1 class="h-lg" style="margin-top:10px">Page introuvable.</h1>
+        <p class="lede" style="margin:14px auto 0">Cette page n'existe pas ou a été déplacée.</p>
+        <div style="margin-top:28px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+          <a href="/fr/" class="btn btn-primary">Retour à l'accueil (FR)</a>
+          <a href="/en/" class="btn btn-ghost">Home (EN)</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+  var isFr = (navigator.language || "").toLowerCase().indexOf('fr') === 0;
+  document.getElementById(isFr ? 'block-fr' : 'block-en').classList.add('show');
+</script>
+</body>
+</html>

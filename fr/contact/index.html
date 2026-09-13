@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact — Mondo Medical</title>
+<meta name="description" content="Contactez Mondo Medical pour toute question concernant nos équipements, nos services ou votre demande de devis.">
+<link rel="alternate" hreflang="en" href="https://www.mondo-medical.example/en/contact/">
+<link rel="alternate" hreflang="fr" href="https://www.mondo-medical.example/fr/contact/">
+<link rel="canonical" href="https://www.mondo-medical.example/fr/contact/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Aller au contenu</a>
+<div id="site-header-slot"></div>
+<main id="main">
+  <div class="page-header">
+    <div class="container">
+      <div class="eyebrow">Contact</div>
+      <h1 class="h-xl">Contactez-nous</h1>
+      <p class="lede">Des questions sur nos équipements ou votre demande de devis ? Notre équipe est là pour vous aider.</p>
+    </div>
+  </div>
+
+  <section>
+    <div class="container split-2" style="align-items:flex-start">
+      <div>
+        <h2 class="h-md">Informations de contact</h2>
+        <ul style="margin-top:22px;display:flex;flex-direction:column;gap:20px">
+          <li style="display:flex;gap:14px"><span style="width:22px;height:22px;color:var(--blue-500);flex:none" id="ic-mail"></span><div><strong>E-mail</strong><div class="small" style="color:var(--ink-500);margin-top:2px">[ contact@mondo-medical.example ]</div></div></li>
+          <li style="display:flex;gap:14px"><span style="width:22px;height:22px;color:var(--blue-500);flex:none" id="ic-phone"></span><div><strong>Téléphone</strong><div class="small" style="color:var(--ink-500);margin-top:2px">[ +00 000 000 000 ]</div></div></li>
+          <li style="display:flex;gap:14px"><span style="width:22px;height:22px;color:var(--blue-500);flex:none" id="ic-phone2"></span><div><strong>WhatsApp</strong><div class="small" style="color:var(--ink-500);margin-top:2px">[ +00 000 000 000 ]</div></div></li>
+          <li style="display:flex;gap:14px"><span style="width:22px;height:22px;color:var(--blue-500);flex:none" id="ic-pin"></span><div><strong>Adresse</strong><div class="small" style="color:var(--ink-500);margin-top:2px">[ Adresse de l'entreprise à renseigner ]</div></div></li>
+          <li style="display:flex;gap:14px"><span style="width:22px;height:22px;color:var(--blue-500);flex:none" id="ic-clock"></span><div><strong>Horaires d'ouverture</strong><div class="small" style="color:var(--ink-500);margin-top:2px">[ Lundi–Vendredi, 9h–18h — exemple ]</div></div></li>
+        </ul>
+      </div>
+      <div>
+        <form id="contact-form" novalidate>
+          <div class="form-grid">
+            <div class="field"><label>Nom<span class="req">*</span></label><input type="text" name="name" data-required><span class="error-msg"></span></div>
+            <div class="field"><label>Entreprise</label><input type="text" name="company"></div>
+            <div class="field"><label>E-mail<span class="req">*</span></label><input type="email" name="email" data-required><span class="error-msg"></span></div>
+            <div class="field"><label>Téléphone</label><input type="tel" name="phone"></div>
+            <div class="field full"><label>Sujet<span class="req">*</span></label><input type="text" name="subject" data-required><span class="error-msg"></span></div>
+            <div class="field full"><label>Message<span class="req">*</span></label><textarea name="message" data-required></textarea><span class="error-msg"></span></div>
+          </div>
+          <p id="contact-form-note" class="small" style="display:none;color:var(--success);margin-bottom:16px"></p>
+          <button type="submit" class="btn btn-primary btn-block">Envoyer le message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+<div id="site-footer-slot"></div>
+
+<script>
+  window.PAGE_LANG = "fr";
+  window.PAGE_KEY = "contact";
+  window.ALT_LANG_URL = "/en/contact/";
+</script>
+<script src="/assets/js/data-brands.js"></script>
+<script src="/assets/js/data-products.js"></script>
+<script src="/assets/js/data.js"></script>
+<script src="/assets/js/icons.js"></script>
+<script src="/assets/js/render-helpers.js"></script>
+<script src="/assets/js/quote.js"></script>
+<script src="/assets/js/popularity.js"></script>
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/quote-submit.js"></script>
+<script src="/assets/js/partials.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/contact-form.js"></script>
+<script>
+  document.getElementById('ic-mail').innerHTML = veridianIcon('mail');
+  document.getElementById('ic-phone').innerHTML = veridianIcon('phone');
+  document.getElementById('ic-phone2').innerHTML = veridianIcon('phone');
+  document.getElementById('ic-pin').innerHTML = veridianIcon('pin');
+  document.getElementById('ic-clock').innerHTML = veridianIcon('clock');
+</script>
+</body>
+</html>

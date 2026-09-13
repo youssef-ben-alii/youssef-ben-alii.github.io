@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demander un devis — Mondo Medical</title>
+<meta name="description" content="Renseignez vos coordonnées pour demander un devis pour les équipements que vous avez sélectionnés.">
+<link rel="alternate" hreflang="en" href="https://www.mondo-medical.example/en/quote/request/">
+<link rel="alternate" hreflang="fr" href="https://www.mondo-medical.example/fr/devis/demande/">
+<link rel="canonical" href="https://www.mondo-medical.example/fr/devis/demande/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Aller au contenu</a>
+<div id="site-header-slot"></div>
+<main id="main">
+  <div class="page-header">
+    <div class="container">
+      <div class="eyebrow">Demande de devis</div>
+      <h1 class="h-xl" id="wizard-top">Demander un devis</h1>
+      <p class="lede">Indiquez-nous comment vous joindre — notre équipe commerciale reviendra vers vous avec les tarifs et la disponibilité.</p>
+    </div>
+  </div>
+
+  <section>
+    <div class="container" style="max-width:880px">
+      <div id="wizard-empty" class="empty-state" style="display:none"></div>
+
+      <div id="quote-wizard">
+        <div class="steps-row">
+          <div class="step-pill active" data-step-pill="1"><span class="num">1</span><span>Vos informations</span></div>
+          <div class="step-sep"></div>
+          <div class="step-pill" data-step-pill="2"><span class="num">2</span><span>Vérification et envoi</span></div>
+        </div>
+
+        <div class="quote-summary-box" style="margin-bottom:36px">
+          <h3 class="h-sm" style="margin-bottom:6px">Équipements sélectionnés</h3>
+          <div id="wizard-cart-summary"></div>
+        </div>
+
+        <form id="quote-request-form" novalidate>
+          <div data-step-panel="1" class="active">
+            <div class="form-grid">
+              <div class="field full">
+                <label>Type de client<span class="req">*</span></label>
+                <div class="radio-row">
+                  <label class="radio-opt"><input type="radio" name="customerType" value="Entreprise" data-type="company" checked> Entreprise / Organisation</label>
+                  <label class="radio-opt"><input type="radio" name="customerType" value="Particulier" data-type="individual"> Particulier</label>
+                </div>
+              </div>
+              <div class="field"><label>Prénom<span class="req">*</span></label><input type="text" name="firstName" data-required><span class="error-msg"></span></div>
+              <div class="field"><label>Nom<span class="req">*</span></label><input type="text" name="lastName" data-required><span class="error-msg"></span></div>
+              <div class="field" id="company-field"><label>Entreprise / Organisation<span class="req" id="company-req">*</span></label><input type="text" name="company" data-required><span class="error-msg"></span></div>
+              <div class="field"><label>E-mail<span class="req">*</span></label><input type="email" name="email" data-required><span class="error-msg"></span></div>
+              <div class="field"><label>Téléphone<span class="req">*</span></label><input type="tel" name="phone" data-required><span class="error-msg"></span></div>
+              <div class="field"><label>Pays<span class="req">*</span></label><input type="text" name="country" data-required><span class="error-msg"></span></div>
+              <div class="field"><label>Ville<span class="req">*</span></label><input type="text" name="city" data-required><span class="error-msg"></span></div>
+              <div class="field"><label>Adresse</label><input type="text" name="address"></div>
+              <div class="field full">
+                <label>Moyen de contact préféré</label>
+                <div class="radio-row">
+                  <label class="radio-opt"><input type="radio" name="contactMethod" value="E-mail" checked> E-mail</label>
+                  <label class="radio-opt"><input type="radio" name="contactMethod" value="Téléphone"> Téléphone</label>
+                  <label class="radio-opt"><input type="radio" name="contactMethod" value="WhatsApp"> WhatsApp</label>
+                </div>
+              </div>
+              <div class="field full"><label>Message supplémentaire</label><textarea name="message" placeholder="Indiquez-nous en davantage sur vos besoins, votre échéance ou votre établissement."></textarea></div>
+            </div>
+            <button type="button" id="to-step-2" class="btn btn-primary">Continuer vers la vérification</button>
+          </div>
+
+          <div data-step-panel="2">
+            <h3 class="h-sm">Votre demande</h3>
+            <div id="review-products" style="margin:16px 0 28px;display:flex;flex-direction:column;gap:8px"></div>
+
+            <h3 class="h-sm">Informations client</h3>
+            <div class="quote-summary-box" style="margin-top:14px">
+              <div class="row"><span>Type de client</span><strong id="review-customer-type"></strong></div>
+              <div class="row"><span>Nom</span><strong id="review-name"></strong></div>
+              <div class="row" id="review-company-row"><span>Entreprise</span><strong id="review-company"></strong></div>
+              <div class="row"><span>E-mail</span><strong id="review-email"></strong></div>
+              <div class="row"><span>Téléphone</span><strong id="review-phone"></strong></div>
+              <div class="row"><span>Localisation</span><strong id="review-location"></strong></div>
+            </div>
+            <h3 class="h-sm" style="margin-top:26px">Message</h3>
+            <p class="body-text" id="review-message" style="margin-top:8px"></p>
+
+            <div class="field" style="margin-top:30px">
+              <div class="checkbox-row">
+                <input type="checkbox" id="consent-checkbox">
+                <label for="consent-checkbox">J'accepte d'être contacté concernant ma demande de devis.</label>
+              </div>
+              <span class="error-msg"></span>
+            </div>
+
+            <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
+              <button type="button" id="back-to-step-1" class="btn btn-ghost">Retour</button>
+              <button type="submit" id="submit-request-btn" class="btn btn-primary">Envoyer la demande de devis</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+<div id="site-footer-slot"></div>
+
+<script>
+  window.PAGE_LANG = "fr";
+  window.PAGE_KEY = "quote";
+  window.ALT_LANG_URL = "/en/quote/request/";
+</script>
+<script src="/assets/js/data-brands.js"></script>
+<script src="/assets/js/data-products.js"></script>
+<script src="/assets/js/data.js"></script>
+<script src="/assets/js/icons.js"></script>
+<script src="/assets/js/render-helpers.js"></script>
+<script src="/assets/js/quote.js"></script>
+<script src="/assets/js/popularity.js"></script>
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/quote-submit.js"></script>
+<script src="/assets/js/partials.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/quote-request.js"></script>
+</body>
+</html>

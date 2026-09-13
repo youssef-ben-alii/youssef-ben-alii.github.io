@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quote Request Received — Mondo Medical</title>
+<meta name="description" content="Your quote request has been received. Our team will review it and contact you shortly.">
+<link rel="alternate" hreflang="en" href="https://www.mondo-medical.example/en/quote/confirmation/">
+<link rel="alternate" hreflang="fr" href="https://www.mondo-medical.example/fr/devis/confirmation/">
+<link rel="canonical" href="https://www.mondo-medical.example/en/quote/confirmation/">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="site-header-slot"></div>
+<main id="main">
+  <section style="padding:80px 0">
+    <div class="container">
+      <div id="confirmation-empty" class="empty-state" style="display:none"></div>
+      <div id="confirmation-root" class="confirm-box">
+        <div class="confirm-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>
+        </div>
+        <h1 class="h-lg">Your quote request has been received.</h1>
+        <p class="lede" style="margin:16px auto 0">Thank you. Our team will review your request and contact you using the information provided.</p>
+
+        <div class="ref-card">
+          <div><div class="lbl">Reference</div><div class="val" id="confirm-ref"></div></div>
+          <div><div class="lbl">Date</div><div class="val" id="confirm-date"></div></div>
+          <div><div class="lbl" id="confirm-count-label"></div><div class="val" id="confirm-count"></div></div>
+        </div>
+
+        <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:10px">
+          <a href="/en/equipment/" class="btn btn-outline">Back to Equipment</a>
+          <button id="download-pdf-btn" class="btn btn-primary">Download Request Summary</button>
+        </div>
+        <p class="small" style="color:var(--ink-300);margin-top:22px;font-style:italic">This summary is not an official quotation. Pricing will be provided separately by our sales team.</p>
+      </div>
+    </div>
+  </section>
+</main>
+<div id="site-footer-slot"></div>
+
+<script>
+  window.PAGE_LANG = "en";
+  window.PAGE_KEY = "quote";
+  window.ALT_LANG_URL = "/fr/devis/confirmation/";
+</script>
+<script src="/assets/js/data-brands.js"></script>
+<script src="/assets/js/data-products.js"></script>
+<script src="/assets/js/data.js"></script>
+<script src="/assets/js/icons.js"></script>
+<script src="/assets/js/render-helpers.js"></script>
+<script src="/assets/js/quote.js"></script>
+<script src="/assets/js/popularity.js"></script>
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/quote-submit.js"></script>
+<script src="/assets/js/partials.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/vendor/jspdf.umd.min.js"></script>
+<script src="/assets/js/pdf-summary.js"></script>
+<script src="/assets/js/confirmation.js"></script>
+</body>
+</html>

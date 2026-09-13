@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Surgical Instruments — Mondo Medical</title>
+<meta name="description" content="Browse our catalog of reusable surgical instruments: forceps, scissors, retractors, needles and more, by category and supplier brand.">
+<link rel="alternate" hreflang="en" href="https://www.mondo-medical.example/en/instruments/">
+<link rel="alternate" hreflang="fr" href="https://www.mondo-medical.example/fr/instruments/">
+<link rel="canonical" href="https://www.mondo-medical.example/en/instruments/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="site-header-slot"></div>
+<main id="main">
+  <div class="page-header">
+    <div class="container">
+      <div class="eyebrow">Catalog</div>
+      <h1 class="h-xl">Surgical Instruments</h1>
+      <p class="lede">Reusable surgical instruments — forceps, scissors, retractors, needle holders and more — organized by category and supplier brand. Instruments are not consumables: these are durable, typically sterilizable tools.</p>
+    </div>
+  </div>
+
+  <section class="section-tight">
+    <div class="container">
+      <div class="filters-bar">
+        <div class="search-input-wrap">
+          <input type="search" id="catalog-search" class="search-input" placeholder="Search instruments...">
+        </div>
+        <select id="filter-category" class="select-field"><option value="">All Categories</option></select>
+        <select id="filter-brand" class="select-field"><option value="">All Brands</option></select>
+        <select id="sort-select" class="select-field">
+          <option value="featured">Featured</option>
+          <option value="newest">Newest</option>
+          <option value="az">A–Z</option>
+        </select>
+        <span class="count" id="result-count"></span>
+      </div>
+
+      <div class="grid grid-3" id="product-grid"></div>
+      <div class="empty-state" id="empty-results" style="display:none">
+        <div class="icon" id="empty-icon"></div>
+        <h2 class="h-md empty-title"></h2>
+        <p class="body-text empty-sub" style="margin:14px auto 0"></p>
+      </div>
+    </div>
+  </section>
+</main>
+<div id="site-footer-slot"></div>
+
+<script>
+  window.PAGE_LANG = "en";
+  window.PAGE_KEY = "instruments";
+  window.ALT_LANG_URL = "/fr/instruments/";
+  window.CATALOG_TYPE = "instrument";
+</script>
+<script src="/assets/js/data-brands.js"></script>
+<script src="/assets/js/data-products.js"></script>
+<script src="/assets/js/data.js"></script>
+<script src="/assets/js/icons.js"></script>
+<script src="/assets/js/render-helpers.js"></script>
+<script src="/assets/js/quote.js"></script>
+<script src="/assets/js/popularity.js"></script>
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/quote-submit.js"></script>
+<script src="/assets/js/partials.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/catalog.js"></script>
+<script>document.getElementById('empty-icon').innerHTML = veridianIcon('empty');</script>
+</body>
+</html>

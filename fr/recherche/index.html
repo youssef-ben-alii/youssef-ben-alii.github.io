@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recherche — Mondo Medical</title>
+<meta name="description" content="Recherchez dans le catalogue d'équipements Mondo Medical.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Aller au contenu</a>
+<div id="site-header-slot"></div>
+<main id="main">
+  <div class="page-header">
+    <div class="container">
+      <div class="eyebrow">Recherche</div>
+      <h1 class="h-xl">Rechercher un équipement</h1>
+      <form id="search-form" style="margin-top:22px;max-width:520px">
+        <div class="search-input-wrap">
+          <input type="search" id="search-query-input" class="search-input" placeholder="Rechercher un équipement..." style="background-color:#fff;color:var(--ink-900)">
+        </div>
+      </form>
+    </div>
+  </div>
+  <section>
+    <div class="container">
+      <p class="small" id="search-summary" style="color:var(--ink-500);margin-bottom:26px"></p>
+      <div class="grid grid-3" id="search-grid"></div>
+      <div class="empty-state" id="search-empty" style="display:none"></div>
+    </div>
+  </section>
+</main>
+<div id="site-footer-slot"></div>
+
+<script>
+  window.PAGE_LANG = "fr";
+  window.PAGE_KEY = "search";
+  window.ALT_LANG_URL = "/en/search/";
+</script>
+<script src="/assets/js/data-brands.js"></script>
+<script src="/assets/js/data-products.js"></script>
+<script src="/assets/js/data.js"></script>
+<script src="/assets/js/icons.js"></script>
+<script src="/assets/js/render-helpers.js"></script>
+<script src="/assets/js/quote.js"></script>
+<script src="/assets/js/popularity.js"></script>
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/quote-submit.js"></script>
+<script src="/assets/js/partials.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/search.js"></script>
+</body>
+</html>

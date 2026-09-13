@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Quote — Mondo Medical</title>
+<meta name="description" content="Review the equipment you've added to your quote before submitting your request to our sales team.">
+<link rel="alternate" hreflang="en" href="https://www.mondo-medical.example/en/quote/">
+<link rel="alternate" hreflang="fr" href="https://www.mondo-medical.example/fr/devis/">
+<link rel="canonical" href="https://www.mondo-medical.example/en/quote/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="site-header-slot"></div>
+<main id="main">
+  <div class="page-header">
+    <div class="container">
+      <div class="eyebrow">Quote</div>
+      <h1 class="h-xl">My Quote</h1>
+      <p class="lede" id="quote-item-count"></p>
+    </div>
+  </div>
+
+  <section>
+    <div class="container split-2" style="align-items:flex-start;grid-template-columns:1.7fr 1fr">
+      <div id="quote-list"></div>
+      <aside class="quote-summary-box" id="quote-summary">
+        <h3 class="h-sm">Summary</h3>
+        <p class="quote-note" id="quote-price-note"></p>
+        <a href="/en/quote/request/" class="btn btn-primary btn-block" style="margin-top:20px">Request a Quote</a>
+        <a href="/en/equipment/" class="btn btn-ghost btn-block" style="margin-top:10px">Continue Browsing</a>
+      </aside>
+      <div id="quote-empty" class="empty-state" style="display:none;grid-column:1/-1"></div>
+    </div>
+  </section>
+</main>
+<div id="site-footer-slot"></div>
+
+<script>
+  window.PAGE_LANG = "en";
+  window.PAGE_KEY = "quote";
+  window.ALT_LANG_URL = "/fr/devis/";
+</script>
+<script src="/assets/js/data-brands.js"></script>
+<script src="/assets/js/data-products.js"></script>
+<script src="/assets/js/data.js"></script>
+<script src="/assets/js/icons.js"></script>
+<script src="/assets/js/render-helpers.js"></script>
+<script src="/assets/js/quote.js"></script>
+<script src="/assets/js/popularity.js"></script>
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/quote-submit.js"></script>
+<script src="/assets/js/partials.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/quote-page.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+COMMENT AJOUTER UNE PHOTO A UN PRODUIT
+========================================
+
+1. Trouvez l'identifiant du produit : ouvrez sa page sur le site, regardez
+   l'adresse dans la barre du navigateur. Exemple :
+     https://votre-site.com/en/instruments/pince-kocher-15-cm-142/
+   L'identifiant est la partie après le dernier "/" avant la fin :
+     pince-kocher-15-cm-142
+
+2. Enregistrez votre photo au format JPG (ou PNG), nommée EXACTEMENT comme
+   cet identifiant :
+     pince-kocher-15-cm-142.jpg
+
+3. Déposez ce fichier directement dans ce dossier (pictures/products/).
+   C'est tout — la photo apparaît automatiquement sur le site, sur la
+   fiche produit ET sur la carte du catalogue, à la place de l'icône.
+
+Conseils pour de bonnes performances :
+- Format JPG recommandé (bonne compression), PNG accepté aussi.
+- Taille recommandée : environ 800x800 pixels maximum.
+- Poids recommandé : entre 40 et 120 Ko par photo (compressez l'image
+  avant de l'ajouter — la plupart des logiciels/sites de compression
+  gratuits font ça en un clic).
+- Aucune autre étape n'est nécessaire : si le fichier n'existe pas encore
+  pour un produit, l'icône générique reste affichée normalement, rien ne
+  casse.
+
+--------------------------------------------------------
+HOW TO ADD A PHOTO TO A PRODUCT (English)
+--------------------------------------------------------
+
+1. Find the product's ID: open its page on the site and look at the
+   browser's address bar. Example:
+     https://your-site.com/en/instruments/pince-kocher-15-cm-142/
+   The ID is the part after the last "/" before the end:
+     pince-kocher-15-cm-142
+
+2. Save your photo as JPG (or PNG), named EXACTLY like that ID:
+     pince-kocher-15-cm-142.jpg
+
+3. Drop that file directly into this folder (pictures/products/). That's
+   it — the photo automatically appears on the product page AND on its
+   catalog card, replacing the icon.
+
+Tips for good performance:
+- JPG is recommended (good compression); PNG also works.
+- Recommended size: around 800x800 pixels maximum.
+- Recommended weight: 40-120 KB per photo (compress before uploading —
+  most free online compressors do this in one click).
+- No other step is needed: if a file doesn't exist yet for a product, the
+  generic icon keeps showing normally — nothing breaks.

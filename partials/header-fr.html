@@ -1,0 +1,55 @@
+<header class="site-header" id="site-header">
+  <div class="container nav-row">
+    <a href="/fr/" class="logo" aria-label="Mondo Medical — Accueil">
+      <img src="/pictures/logo.png" alt="Mondo Medical" class="logo-img">
+    </a>
+    <nav class="nav-primary" aria-label="Navigation principale">
+      <a href="/fr/" data-page="home">Accueil</a>
+      <a href="/fr/equipements/" data-page="equipment">Équipements</a>
+      <a href="/fr/instruments/" data-page="instruments">Instruments</a>
+      <a href="/fr/marques/" data-page="brands">Marques</a>
+      <a href="/fr/services/" data-page="services">Services</a>
+      <a href="/fr/actualites/" data-page="news">Actualités</a>
+      <a href="/fr/a-propos/" data-page="about">À propos</a>
+    </nav>
+    <div class="nav-right">
+      <div class="lang-switch" aria-label="Langue">
+        <a href="#" data-lang-switch="en">EN</a>
+        <span aria-hidden="true">|</span>
+        <a href="#" class="active" data-lang-current>FR</a>
+      </div>
+      <a href="/fr/devis/" class="quote-link" data-page="quote">
+        <span data-icon="quote"></span>
+        <span>Ma demande de devis (<span class="quote-badge" data-quote-count>0</span>)</span>
+      </a>
+      <a href="/fr/devis/demande/" class="btn btn-primary btn-sm">Demander un devis</a>
+      <button class="nav-toggle" aria-label="Ouvrir le menu" data-drawer-open>
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="mobile-drawer" data-drawer>
+  <div class="backdrop" data-drawer-close></div>
+  <div class="panel" role="dialog" aria-label="Menu">
+    <button class="close-btn" aria-label="Fermer le menu" data-drawer-close>&times;</button>
+    <nav>
+      <a href="/fr/">Accueil</a>
+      <a href="/fr/equipements/">Équipements</a>
+      <a href="/fr/instruments/">Instruments</a>
+      <a href="/fr/marques/">Marques</a>
+      <a href="/fr/services/">Services</a>
+      <a href="/fr/actualites/">Actualités</a>
+      <a href="/fr/a-propos/">À propos</a>
+      <a href="/fr/contact/">Contact</a>
+      <a href="/fr/devis/">Ma demande de devis (<span data-quote-count>0</span>)</a>
+    </nav>
+    <div class="m-lang">
+      <a href="#" data-lang-switch="en">EN</a>
+      <a href="#" class="active" data-lang-current>FR</a>
+    </div>
+    <div class="m-actions">
+      <a href="/fr/devis/demande/" class="btn btn-primary btn-block">Demander un devis</a>
+    </div>
+  </div>
+</div>
