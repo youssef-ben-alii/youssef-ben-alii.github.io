@@ -154,7 +154,7 @@
     initFadeIn();
   }
 
-  document.addEventListener('DOMContentLoaded', function(){
+  veridianOnReady(function(){
     VERIDIAN_DATA.ready.then(function(){
       renderCategoryGrid();
       renderFeaturedProducts();

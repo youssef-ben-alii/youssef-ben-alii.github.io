@@ -88,6 +88,6 @@ function clearQuote(){
   saveQuote([]);
 }
 
-document.addEventListener('DOMContentLoaded', function(){
+veridianOnReady(function(){
   if(window.updateQuoteBadges) updateQuoteBadges();
 });

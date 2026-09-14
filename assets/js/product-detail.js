@@ -118,5 +118,5 @@
     initQtyStepper(document.getElementById('pd-qty-scope'), function(){});
   }
 
-  document.addEventListener('DOMContentLoaded', function(){ VERIDIAN_DATA.ready.then(init); });
+  veridianOnReady(function(){ VERIDIAN_DATA.ready.then(init); });
 })();

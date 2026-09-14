@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tableau de bord — Mondo Medical</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/admin.css">
+</head>
+<body>
+<div class="admin-shell">
+
+  <!-- ---------- Login ---------- -->
+  <div class="admin-login-wrap" id="admin-login">
+    <form class="admin-login-card" id="admin-login-form">
+      <h1>Tableau de bord</h1>
+      <p>Connectez-vous avec votre compte administrateur.</p>
+      <div class="field" style="margin-bottom:14px">
+        <label for="admin-email">E-mail</label>
+        <input type="email" id="admin-email" required autocomplete="username">
+      </div>
+      <div class="field" style="margin-bottom:6px">
+        <label for="admin-password">Mot de passe</label>
+        <input type="password" id="admin-password" required autocomplete="current-password">
+      </div>
+      <p class="error-msg" id="admin-login-error" style="display:none;margin-bottom:10px"></p>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px">Se connecter</button>
+    </form>
+  </div>
+
+  <!-- ---------- App ---------- -->
+  <div id="admin-app" style="display:none">
+    <div class="admin-topbar">
+      <div class="wordmark">Mondo Medical — Admin</div>
+      <div class="admin-tabs">
+        <button type="button" class="admin-tab active" data-tab="overview">Aperçu</button>
+        <button type="button" class="admin-tab" data-tab="quotes">Devis</button>
+        <button type="button" class="admin-tab" data-tab="products">Catalogue</button>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" id="admin-logout">Déconnexion</button>
+    </div>
+
+    <div class="admin-main">
+
+      <!-- ---------- Overview / analytics ---------- -->
+      <section class="admin-panel active" id="panel-overview">
+        <div class="admin-stats" id="overview-stats"></div>
+
+        <div class="admin-card">
+          <div class="admin-card-head">
+            <h2>Demandes de devis</h2>
+            <div class="admin-period-group" id="overview-period">
+              <button type="button" class="admin-period-btn" data-period="week">Semaine</button>
+              <button type="button" class="admin-period-btn active" data-period="month">Mois</button>
+              <button type="button" class="admin-period-btn" data-period="year">Année</button>
+            </div>
+          </div>
+          <div class="admin-chart-wrap" id="overview-chart-wrap">
+            <p class="body-text" id="overview-chart-empty" style="display:none">Aucune demande sur cette période.</p>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-head"><h2>Top 10 des articles demandés</h2></div>
+          <ol class="admin-top-list" id="overview-top-list"></ol>
+        </div>
+      </section>
+
+      <!-- ---------- Quote requests ---------- -->
+      <section class="admin-panel" id="panel-quotes">
+        <div class="admin-card">
+          <div class="admin-card-head">
+            <h2>Demandes de devis</h2>
+            <input type="search" class="admin-search" id="quotes-search" placeholder="Rechercher par nom ou numéro...">
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr><th>Référence</th><th>Date</th><th>Client</th><th>Statut</th><th></th></tr>
+              </thead>
+              <tbody id="quotes-tbody"></tbody>
+            </table>
+          </div>
+          <p class="body-text" id="quotes-empty" style="display:none;margin-top:14px">Aucune demande trouvée.</p>
+        </div>
+      </section>
+
+      <!-- ---------- Products ---------- -->
+      <section class="admin-panel" id="panel-products">
+        <div class="admin-card">
+          <div class="admin-card-head">
+            <h2>Catalogue</h2>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <input type="search" class="admin-search" id="products-search" placeholder="Rechercher un article...">
+              <button type="button" class="btn btn-primary btn-sm" id="product-add-btn">+ Nouvel article</button>
+            </div>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr><th>Nom (FR)</th><th>Type</th><th>Catégorie</th><th>Marques</th><th></th></tr>
+              </thead>
+              <tbody id="products-tbody"></tbody>
+            </table>
+          </div>
+          <p class="body-text" id="products-empty" style="display:none;margin-top:14px">Aucun article trouvé.</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ---------- Product add/edit modal ---------- -->
+  <div class="admin-modal-backdrop" id="product-modal" style="display:none">
+    <div class="admin-modal">
+      <h2 id="product-modal-title">Nouvel article</h2>
+      <form id="product-form">
+        <input type="hidden" id="pf-id">
+        <img class="admin-photo-preview" id="pf-photo-preview" style="display:none">
+        <div class="field" style="margin-bottom:14px">
+          <label for="pf-photo">Photo</label>
+          <input type="file" id="pf-photo" accept="image/*">
+        </div>
+        <div class="admin-form-grid">
+          <div class="field"><label for="pf-name-fr">Nom (Français) *</label><input type="text" id="pf-name-fr" required></div>
+          <div class="field"><label for="pf-name-en">Nom (Anglais) *</label><input type="text" id="pf-name-en" required></div>
+          <div class="field">
+            <label for="pf-type">Type *</label>
+            <select id="pf-type" class="select-field" required>
+              <option value="equipment">Équipement</option>
+              <option value="instrument">Instrument</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="pf-category">Catégorie *</label>
+            <select id="pf-category" class="select-field" required></select>
+          </div>
+          <div class="field"><label for="pf-model">Modèle</label><input type="text" id="pf-model"></div>
+          <div class="field full">
+            <label>Marques disponibles</label>
+            <input type="search" class="admin-search" id="pf-brand-search" placeholder="Filtrer les marques..." style="width:100%;margin-bottom:8px">
+            <div class="admin-brand-picker" id="pf-brand-picker"></div>
+          </div>
+          <div class="field full"><label for="pf-desc-fr">Description (Français)</label><textarea id="pf-desc-fr" rows="3"></textarea></div>
+          <div class="field full"><label for="pf-desc-en">Description (Anglais)</label><textarea id="pf-desc-en" rows="3"></textarea></div>
+        </div>
+        <p class="error-msg" id="product-form-error" style="display:none;margin-top:12px"></p>
+        <div class="admin-modal-actions">
+          <button type="button" class="btn btn-ghost" id="product-form-cancel">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="product-form-save">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/admin.js"></script>
+</body>
+</html>

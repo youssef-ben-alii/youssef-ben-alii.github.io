@@ -81,7 +81,7 @@ function initFilterToggle(){
   });
 }
 
-document.addEventListener('DOMContentLoaded', function(){
+veridianOnReady(function(){
   initFadeIn();
   initTabs();
   initFilterToggle();

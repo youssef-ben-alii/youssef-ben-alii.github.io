@@ -1,12 +1,12 @@
 /* ==========================================================================
-   MONDO MEDICAL — Static catalog data (bilingual UI, real product data).
-   Brands and products are imported from the customer's real inventory
-   export (see /gen/source/) via assets/js/data-brands.js and
-   assets/js/data-products.js (must be loaded BEFORE this file). Product
-   designations come directly from that inventory and are kept in their
-   original French wording on both language versions — this is real
-   surgical/medical terminology, and auto-translating hundreds of highly
-   specific instrument names without domain review risks introducing
+   MONDO MEDICAL — Static UI content (categories, services, news) plus the
+   live catalog loader. Brands/products themselves live in Supabase (see
+   supabase/migration.sql) — this file only defines the static parts of
+   VERIDIAN_DATA and fetches brands/products live at the bottom. Product
+   designations come directly from the customer's real inventory and are
+   kept in their original French wording on both language versions — this
+   is real surgical/medical terminology, and auto-translating hundreds of
+   highly specific instrument names without domain review risks introducing
    incorrect medical terminology, so we deliberately do not invent an
    English rendering of these names.
    No backend / no database in this version — swap this file for an API
@@ -129,6 +129,16 @@ var VERIDIAN_DATA = {
   ]
 };
 
+/* Runs fn once the DOM is ready — immediately if it already is. A plain
+   `document.addEventListener('DOMContentLoaded', fn)` only works when the
+   script is present at initial page load; scripts injected dynamically
+   after the fact (see 404.html's fallback product renderer) can attach
+   that listener AFTER the event already fired, so it would never run. */
+function veridianOnReady(fn){
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', fn); }
+  else { fn(); }
+}
+
 /* ---------- Load brands & products live from Supabase ----------
    The catalog is no longer bundled as static JS: brands/products live in
    Supabase (see supabase/migration.sql) and are editable there directly —
@@ -185,7 +195,7 @@ function veridianFetchSnapshotCatalog(){
 }
 
 VERIDIAN_DATA.ready = new Promise(function(resolve){
-  document.addEventListener('DOMContentLoaded', function(){
+  veridianOnReady(function(){
     var cfg = (window.VERIDIAN_CONFIG || {}).supabase;
     var attempt = (cfg && cfg.url && window.supabase)
       ? veridianFetchLiveCatalog(cfg)

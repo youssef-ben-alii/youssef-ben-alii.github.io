@@ -14,7 +14,10 @@
 </style>
 </head>
 <body>
-<main>
+
+<!-- Plain "not found" message -- shown unless the URL turns out to match a
+     real product added since the last full site build (see script below). -->
+<main id="not-found-block">
   <div class="container error-page">
     <div>
       <div class="code">404</div>
@@ -37,9 +40,108 @@
     </div>
   </div>
 </main>
+
+<!-- Product detail shell -- only used when the URL looks like a product
+     page (/en|fr/equipment|equipements|instruments/<id>/). New products
+     added from the admin dashboard have no pre-built static page yet; this
+     lets their URL work anyway by rendering them here, live from Supabase,
+     the moment a visitor hits this fallback. Identical markup/scripts to a
+     normal generated product page. -->
+<div id="product-shell" style="display:none">
+<div id="site-header-slot"></div>
+<main id="main">
+  <div class="container" style="padding-top:22px">
+    <nav class="breadcrumb" id="pd-breadcrumb" aria-label="Breadcrumb" style="color:var(--ink-500)"></nav>
+  </div>
+  <section class="section-tight" style="padding-top:10px">
+    <div class="container">
+      <div class="pd-grid">
+        <div>
+          <div class="pd-gallery-main" id="pd-gallery-main"></div>
+          <div class="pd-thumbs" id="pd-thumbs"></div>
+        </div>
+        <div class="pd-info">
+          <div class="card-eyebrow" id="pd-category"></div>
+          <h1 class="h-xl" id="pd-title"></h1>
+          <div class="pd-brand-row" id="pd-selected-brand"></div>
+          <div class="pd-brand-row" id="pd-brand"></div>
+          <p class="lede pd-desc" id="pd-short" style="font-size:1.02rem"></p>
+          <div class="pd-price-note" id="pd-price-note"></div>
+          <div class="pd-qty" id="pd-qty-scope" data-qty-scope>
+            <div class="qty-stepper">
+              <button type="button" data-qty-action="dec" aria-label="Decrease quantity">&minus;</button>
+              <input type="text" id="pd-qty-input" data-qty-value inputmode="numeric" value="1" aria-label="Quantity">
+              <button type="button" data-qty-action="inc" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+          <p class="error-msg" id="pd-brand-required-msg" style="display:none;margin-bottom:10px"></p>
+          <div class="pd-actions">
+            <button class="btn btn-primary" id="pd-add-btn"></button>
+            <a class="btn btn-outline" id="pd-info-btn" href="#"></a>
+          </div>
+          <h3 class="h-sm" id="pd-brands-title" style="margin-top:34px"></h3>
+          <div id="pd-brands-list" style="margin-top:14px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bg-off related-strip" id="related-products-section">
+    <div class="container">
+      <div class="section-head"><h2 class="h-lg" id="related-title"></h2></div>
+      <div class="grid grid-3" id="related-grid"></div>
+    </div>
+  </section>
+  <div id="product-detail-root"></div>
+</main>
+<div id="site-footer-slot"></div>
+</div>
+
 <script>
-  var isFr = (navigator.language || "").toLowerCase().indexOf('fr') === 0;
-  document.getElementById(isFr ? 'block-fr' : 'block-en').classList.add('show');
+  (function(){
+    var isFr = (navigator.language || "").toLowerCase().indexOf('fr') === 0;
+    document.getElementById(isFr ? 'block-fr' : 'block-en').classList.add('show');
+
+    var path = window.location.pathname;
+    var m = path.match(/^\/(en|fr)\/(equipment|equipements|instruments)\/([^/]+)\/?$/);
+    if(!m) return; // not a product-shaped URL -- leave the plain 404 message as-is
+
+    var lang = m[1], base = m[2], id = decodeURIComponent(m[3]);
+    var pageKey = base === 'instruments' ? 'instruments' : 'equipment';
+    var altBase = base === 'equipment' ? 'equipements' : (base === 'equipements' ? 'equipment' : 'instruments');
+    var altLang = lang === 'en' ? 'fr' : 'en';
+
+    window.PAGE_LANG = lang;
+    window.PAGE_KEY = pageKey;
+    window.PRODUCT_ID = id;
+    window.ALT_LANG_URL = '/' + altLang + '/' + altBase + '/' + id + '/';
+
+    // Load the same scripts a normal product page uses, in the same order.
+    var scripts = [
+      'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
+      '/assets/js/data.js', '/assets/js/icons.js', '/assets/js/render-helpers.js',
+      '/assets/js/quote.js', '/assets/js/popularity.js', '/assets/js/config.js',
+      '/assets/js/quote-submit.js', '/assets/js/partials.js', '/assets/js/main.js',
+      '/assets/js/product-detail.js'
+    ];
+    function loadNext(i){
+      if(i >= scripts.length){ afterScriptsLoaded(); return; }
+      var s = document.createElement('script');
+      s.src = scripts[i];
+      s.onload = function(){ loadNext(i+1); };
+      document.head.appendChild(s);
+    }
+    function afterScriptsLoaded(){
+      VERIDIAN_DATA.ready.then(function(){
+        var found = findProductById(id);
+        if(found){
+          document.getElementById('not-found-block').style.display = 'none';
+          document.getElementById('product-shell').style.display = 'block';
+        }
+        // If not found, the plain 404 message (already shown) stays as-is.
+      });
+    }
+    loadNext(0);
+  })();
 </script>
 </body>
 </html>

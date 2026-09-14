@@ -72,7 +72,7 @@
     });
   };
 
-  document.addEventListener('DOMContentLoaded', function(){
+  veridianOnReady(function(){
     var lang = window.PAGE_LANG || "en";
     injectPartial('/partials/header-'+lang+'.html', 'site-header-slot', initHeader);
     injectPartial('/partials/footer-'+lang+'.html', 'site-footer-slot', initFooter);
