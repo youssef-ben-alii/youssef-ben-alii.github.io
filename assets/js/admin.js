@@ -107,8 +107,58 @@
         document.querySelectorAll('.admin-panel').forEach(function(p){ p.classList.remove('active'); });
         btn.classList.add('active');
         document.getElementById('panel-' + btn.getAttribute('data-tab')).classList.add('active');
+        if(btn.getAttribute('data-tab') === 'quotes'){ clearQuotesBadge(); }
       });
     });
+  }
+
+  /* ==================== LIVE NOTIFICATIONS (new quote requests) ====================
+     Requires migration_004_realtime.sql (enables Postgres replication for
+     quote_requests). Without it, this subscription simply never fires —
+     the dashboard still works, just without live updates. */
+  var unreadQuotesCount = 0;
+
+  function showAdminToast(title, message, onClick){
+    var stack = document.getElementById('admin-toast-stack');
+    var el = document.createElement('div');
+    el.className = 'admin-toast';
+    el.innerHTML = '<strong></strong><span></span>';
+    el.querySelector('strong').textContent = title;
+    el.querySelector('span').textContent = message;
+    el.addEventListener('click', function(){ el.remove(); if(onClick) onClick(); });
+    stack.appendChild(el);
+    setTimeout(function(){ el.remove(); }, 8000);
+  }
+
+  function bumpQuotesBadge(){
+    unreadQuotesCount++;
+    var badge = document.getElementById('quotes-new-badge');
+    badge.textContent = unreadQuotesCount;
+    badge.style.display = 'inline-flex';
+  }
+  function clearQuotesBadge(){
+    unreadQuotesCount = 0;
+    document.getElementById('quotes-new-badge').style.display = 'none';
+  }
+
+  function subscribeQuoteRequestsRealtime(){
+    if(window.Notification && Notification.permission === 'default'){ Notification.requestPermission(); }
+    client.channel('quote-requests-live')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'quote_requests' }, function(payload){
+        var row = payload.new;
+        quoteRowsCache = quoteRowsCache ? [row].concat(quoteRowsCache) : [row];
+        renderOverviewFromCache();
+        renderQuotesTable(document.getElementById('quotes-search').value);
+        bumpQuotesBadge();
+        var who = ((row.first_name||'')+' '+(row.last_name||'')).trim() || 'Client';
+        showAdminToast('Nouvelle demande de devis', who + ' — ' + row.reference, function(){
+          document.querySelector('.admin-tab[data-tab="quotes"]').click();
+        });
+        if(window.Notification && Notification.permission === 'granted'){
+          new Notification('Nouvelle demande de devis', { body: who + ' — ' + row.reference });
+        }
+      })
+      .subscribe();
   }
 
   function initApp(){
@@ -119,6 +169,7 @@
     wireQuotes();
     wireProducts();
     wireBrands();
+    subscribeQuoteRequestsRealtime();
   }
 
   /* ==================== OVERVIEW / ANALYTICS ==================== */
@@ -504,11 +555,45 @@
   var form = document.getElementById('product-form');
   var formError = document.getElementById('product-form-error');
   var photoFile = null;
+  var perBrandPhotoFiles = {};
+
+  function renderPerBrandPhotoInputs(productId){
+    var checked = Array.prototype.slice.call(document.querySelectorAll('#pf-brand-picker input:checked')).map(function(i){ return i.value; });
+    Object.keys(perBrandPhotoFiles).forEach(function(bid){ if(checked.indexOf(bid) === -1) delete perBrandPhotoFiles[bid]; });
+    var container = document.getElementById('pf-brand-photos');
+    if(!checked.length){
+      container.innerHTML = '<p class="body-text" style="font-size:.82rem">Cochez une marque ci-dessus pour lui associer une photo spécifique.</p>';
+      return;
+    }
+    container.innerHTML = checked.map(function(bid){
+      var note = perBrandPhotoFiles[bid] ? ' <span style="color:var(--blue-500)">(nouvelle photo sélectionnée)</span>'
+        : (productId ? ' <span style="color:var(--ink-500)">(photo actuelle conservée si vous n\'en choisissez pas)</span>' : '');
+      return (
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">'+
+          '<span style="min-width:110px;font-size:.85rem">'+escapeHtml(brandName(bid))+'</span>'+
+          '<input type="file" accept="image/*" data-brand-photo="'+bid+'">'+
+          '<span style="font-size:.78rem">'+note+'</span>'+
+        '</div>'
+      );
+    }).join('');
+  }
+
+  document.getElementById('pf-brand-photos').addEventListener('change', function(e){
+    var input = e.target.closest('[data-brand-photo]');
+    if(!input) return;
+    var bid = input.getAttribute('data-brand-photo');
+    perBrandPhotoFiles[bid] = input.files[0] || null;
+    renderPerBrandPhotoInputs(document.getElementById('pf-id').value);
+  });
+  document.getElementById('pf-brand-picker').addEventListener('change', function(e){
+    if(e.target.matches('input[type="checkbox"]')) renderPerBrandPhotoInputs(document.getElementById('pf-id').value);
+  });
 
   function openModal(product){
     formError.style.display = 'none';
     form.reset();
     photoFile = null;
+    perBrandPhotoFiles = {};
     document.getElementById('pf-id').value = product ? product.id : '';
     document.getElementById('product-modal-title').textContent = product ? 'Modifier l\'article' : 'Nouvel article';
     document.getElementById('pf-name-fr').value = product ? product.name_fr : '';
@@ -520,6 +605,7 @@
     document.getElementById('pf-desc-fr').value = product ? (product.description_fr||'') : '';
     document.getElementById('pf-desc-en').value = product ? (product.description_en||'') : '';
     renderBrandPicker(product ? product.brand_ids : []);
+    renderPerBrandPhotoInputs(product ? product.id : null);
 
     var preview = document.getElementById('pf-photo-preview');
     if(product){
@@ -565,6 +651,16 @@
       .then(function(res){ if(res.error){ throw new Error(res.error.message); } });
   }
 
+  function uploadPerBrandPhotos(id){
+    var bids = Object.keys(perBrandPhotoFiles).filter(function(b){ return perBrandPhotoFiles[b]; });
+    return Promise.all(bids.map(function(bid){
+      var file = perBrandPhotoFiles[bid];
+      var ext = /png/i.test(file.type) ? 'png' : 'jpg';
+      return client.storage.from('product-photos').upload(id + '--' + bid + '.' + ext, file, { upsert: true, contentType: file.type })
+        .then(function(res){ if(res.error){ throw new Error(res.error.message + ' (' + brandName(bid) + ')'); } });
+    }));
+  }
+
   form.addEventListener('submit', function(e){
     e.preventDefault();
     formError.style.display = 'none';
@@ -599,7 +695,7 @@
       : insertWithUniqueId('products', uniqueProductId(nameFr), fields).then(function(newId){ savedId = newId; });
 
     save.then(function(){
-      return uploadPhotoIfAny(savedId);
+      return Promise.all([uploadPhotoIfAny(savedId), uploadPerBrandPhotos(savedId)]);
     }).then(function(){
       saveBtn.disabled = false;
       closeModal();

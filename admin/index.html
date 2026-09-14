@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="/assets/css/admin.css">
 </head>
 <body>
+<div class="admin-toast-stack" id="admin-toast-stack"></div>
 <div class="admin-shell">
 
   <!-- ---------- Login ---------- -->
@@ -37,7 +38,7 @@
       <div class="wordmark">Mondo Medical — Admin</div>
       <div class="admin-tabs">
         <button type="button" class="admin-tab active" data-tab="overview">Aperçu</button>
-        <button type="button" class="admin-tab" data-tab="quotes">Devis</button>
+        <button type="button" class="admin-tab" data-tab="quotes">Devis<span class="admin-tab-badge" id="quotes-new-badge" style="display:none"></span></button>
         <button type="button" class="admin-tab" data-tab="products">Catalogue</button>
         <button type="button" class="admin-tab" data-tab="brands">Marques</button>
       </div>
@@ -192,6 +193,11 @@
             <label>Marques disponibles</label>
             <input type="search" class="admin-search" id="pf-brand-search" placeholder="Filtrer les marques..." style="width:100%;margin-bottom:8px">
             <div class="admin-brand-picker" id="pf-brand-picker"></div>
+          </div>
+          <div class="field full">
+            <label>Photo par marque (facultatif)</label>
+            <p class="body-text" style="font-size:.8rem;margin-bottom:8px">Sans photo spécifique, la photo générique ci-dessus s'affiche pour cette marque.</p>
+            <div id="pf-brand-photos"></div>
           </div>
           <div class="field full"><label for="pf-desc-fr">Description (Français)</label><textarea id="pf-desc-fr" rows="3"></textarea></div>
           <div class="field full"><label for="pf-desc-en">Description (Anglais)</label><textarea id="pf-desc-en" rows="3"></textarea></div>
