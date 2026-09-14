@@ -36,6 +36,8 @@ body{background:var(--paper-off,#f7f6f3)}
 
 /* ---- Top bar ---- */
 .admin-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.admin-brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.admin-logo-img{height:34px;width:auto;display:block}
 .admin-topbar .wordmark{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:600;color:var(--navy-950)}
 .admin-tabs{display:flex;gap:6px;flex-wrap:wrap}
 .admin-tab{padding:.6em 1.1em;border-radius:999px;border:1px solid transparent;background:none;font-size:.88rem;font-weight:600;color:var(--ink-500);cursor:pointer}
