@@ -96,6 +96,13 @@
             <h2>Catalogue</h2>
             <div style="display:flex;gap:10px;flex-wrap:wrap">
               <input type="search" class="admin-search" id="products-search" placeholder="Rechercher un article...">
+              <select class="select-field" id="products-sort">
+                <option value="name">Trier par nom</option>
+                <option value="brand">Trier par marque</option>
+              </select>
+              <select class="select-field" id="products-brand-filter">
+                <option value="">Toutes les marques</option>
+              </select>
               <button type="button" class="btn btn-primary btn-sm" id="product-add-btn">+ Nouvel article</button>
             </div>
           </div>

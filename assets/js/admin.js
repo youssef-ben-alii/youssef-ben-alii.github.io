@@ -39,6 +39,28 @@
     return s;
   }
 
+  /* Inserts a new row with a slug-based id, retrying with "-2", "-3"... if
+     the id already exists. Relying only on the client-side brands/products
+     cache to pick a "free" id isn't safe -- that cache can be a few seconds
+     stale (another change landed since it was fetched), which surfaced as
+     a raw "duplicate key value violates..." error. Postgres error code
+     23505 = unique_violation; retrying on exactly that code (rather than
+     matching the message text) is what's actually reliable here. */
+  function insertWithUniqueId(table, baseId, fields, attempt){
+    attempt = attempt || 0;
+    var candidateId = attempt === 0 ? baseId : baseId + '-' + (attempt + 1);
+    var row = Object.assign({ id: candidateId }, fields);
+    return client.from(table).insert(row).then(function(res){
+      if(res.error){
+        if(res.error.code === '23505' && attempt < 30){
+          return insertWithUniqueId(table, baseId, fields, attempt + 1);
+        }
+        throw new Error(res.error.message);
+      }
+      return candidateId;
+    });
+  }
+
   function photoUrl(id, ext){ return cfg.url + '/storage/v1/object/public/product-photos/' + id + '.' + ext; }
   function brandPhotoStorageUrl(id, ext){ return cfg.url + '/storage/v1/object/public/brand-photos/' + id + '.' + ext; }
 
@@ -416,12 +438,29 @@
     return b ? b.name : id;
   }
 
-  function renderProductsTable(filterText){
-    var q = (filterText||'').trim().toLowerCase();
+  function populateProductsBrandFilter(){
+    var sel = document.getElementById('products-brand-filter');
+    var current = sel.value;
+    sel.innerHTML = '<option value="">Toutes les marques</option>' +
+      (brandsCache||[]).map(function(b){ return '<option value="'+b.id+'">'+escapeHtml(b.name)+'</option>'; }).join('');
+    sel.value = current;
+  }
+
+  function renderProductsTable(){
+    var q = document.getElementById('products-search').value.trim().toLowerCase();
+    var sortMode = document.getElementById('products-sort').value;
+    var brandFilter = document.getElementById('products-brand-filter').value;
     var rows = (productsCache||[]).filter(function(p){
+      if(brandFilter && (p.brand_ids||[]).indexOf(brandFilter) === -1) return false;
       if(!q) return true;
       return (p.name_fr+' '+p.name_en).toLowerCase().indexOf(q) !== -1;
     });
+    if(sortMode === 'brand'){
+      rows = rows.slice().sort(function(a,b){
+        var an = brandName((a.brand_ids||[])[0] || ''), bn = brandName((b.brand_ids||[])[0] || '');
+        return an.localeCompare(bn) || a.name_fr.localeCompare(b.name_fr);
+      });
+    }
     var tbody = document.getElementById('products-tbody');
     var emptyEl = document.getElementById('products-empty');
     if(!rows.length){ tbody.innerHTML=''; emptyEl.style.display='block'; return; }
@@ -546,25 +585,27 @@
     var saveBtn = document.getElementById('product-form-save');
     saveBtn.disabled = true;
 
-    var id = existingId || uniqueProductId(nameFr);
-    var row = {
-      id: id, type: type, category: category, name_fr: nameFr, name_en: nameEn,
+    var fields = {
+      type: type, category: category, name_fr: nameFr, name_en: nameEn,
       model: model, brand_ids: brandIds, description_fr: descFr, description_en: descEn
     };
 
+    var savedId = null;
     var save = existingId
-      ? client.from('products').update(row).eq('id', existingId)
-      : client.from('products').insert(row);
+      ? client.from('products').update(fields).eq('id', existingId).then(function(res){
+          if(res.error){ throw new Error(res.error.message); }
+          savedId = existingId;
+        })
+      : insertWithUniqueId('products', uniqueProductId(nameFr), fields).then(function(newId){ savedId = newId; });
 
-    save.then(function(res){
-      if(res.error){ throw new Error(res.error.message); }
-      return uploadPhotoIfAny(id);
+    save.then(function(){
+      return uploadPhotoIfAny(savedId);
     }).then(function(){
       saveBtn.disabled = false;
       closeModal();
       return fetchProducts();
     }).then(function(){
-      renderProductsTable(document.getElementById('products-search').value);
+      renderProductsTable();
     }).catch(function(err){
       saveBtn.disabled = false;
       formError.textContent = "Erreur : " + err.message;
@@ -574,7 +615,13 @@
 
   function wireProducts(){
     document.getElementById('products-search').addEventListener('input', function(e){
-      renderProductsTable(e.target.value);
+      renderProductsTable();
+    });
+    document.getElementById('products-sort').addEventListener('change', function(e){
+      renderProductsTable();
+    });
+    document.getElementById('products-brand-filter').addEventListener('change', function(e){
+      renderProductsTable();
     });
     document.getElementById('products-tbody').addEventListener('click', function(e){
       var editBtn = e.target.closest('[data-edit]');
@@ -590,12 +637,13 @@
         client.from('products').delete().eq('id', id).then(function(res){
           if(res.error){ alert("Erreur : " + res.error.message); return; }
           productsCache = (productsCache||[]).filter(function(x){ return x.id !== id; });
-          renderProductsTable(document.getElementById('products-search').value);
+          renderProductsTable();
         });
       }
     });
     Promise.all([fetchBrands(), fetchProducts()]).then(function(){
-      renderProductsTable('');
+      populateProductsBrandFilter();
+      renderProductsTable();
     });
   }
 
@@ -678,20 +726,22 @@
     var saveBtn = document.getElementById('brand-form-save');
     saveBtn.disabled = true;
 
-    var id = existingId || uniqueBrandId(name);
+    var savedId = null;
     var save = existingId
-      ? client.from('brands').update({ name: name }).eq('id', existingId)
-      : client.from('brands').insert({ id: id, name: name });
+      ? client.from('brands').update({ name: name }).eq('id', existingId).then(function(res){
+          if(res.error){ throw new Error(res.error.message); }
+          savedId = existingId;
+        })
+      : insertWithUniqueId('brands', uniqueBrandId(name), { name: name }).then(function(newId){ savedId = newId; });
 
-    save.then(function(res){
-      if(res.error){ throw new Error(res.error.message); }
-      return uploadBrandPhotoIfAny(id);
+    save.then(function(){
+      return uploadBrandPhotoIfAny(savedId);
     }).then(function(){
       saveBtn.disabled = false;
       closeBrandModal();
       return fetchBrands();
     }).then(function(){
-      renderBrandsTable(document.getElementById('brands-search').value);
+      renderBrandsTable(document.getElementById('brands-search').value); populateProductsBrandFilter();
     }).catch(function(err){
       saveBtn.disabled = false;
       brandFormError.textContent = "Erreur : " + err.message;
@@ -717,7 +767,7 @@
         client.from('brands').delete().eq('id', id).then(function(res){
           if(res.error){ alert("Erreur : " + res.error.message); return; }
           brandsCache = (brandsCache||[]).filter(function(x){ return x.id !== id; });
-          renderBrandsTable(document.getElementById('brands-search').value);
+          renderBrandsTable(document.getElementById('brands-search').value); populateProductsBrandFilter();
         });
       }
     });
