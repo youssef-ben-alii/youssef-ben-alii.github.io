@@ -95,5 +95,5 @@
     render();
   }
 
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', function(){ VERIDIAN_DATA.ready.then(init); });
 })();

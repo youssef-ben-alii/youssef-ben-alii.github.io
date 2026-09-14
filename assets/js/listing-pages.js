@@ -155,11 +155,13 @@
   }
 
   document.addEventListener('DOMContentLoaded', function(){
-    renderCategoryGrid();
-    renderFeaturedProducts();
-    renderBrands();
-    renderServices();
-    renderNewsIndex();
-    initFadeIn();
+    VERIDIAN_DATA.ready.then(function(){
+      renderCategoryGrid();
+      renderFeaturedProducts();
+      renderBrands();
+      renderServices();
+      renderNewsIndex();
+      initFadeIn();
+    });
   });
 })();

@@ -30,8 +30,9 @@
     if(query){
       var q = query.toLowerCase();
       results = VERIDIAN_DATA.products.filter(function(p){
+        var brandNames = (p.brands||[]).map(brandName).join(' ');
         var hay = [p.name.en, p.name.fr, categoryName(p.category,'en'), categoryName(p.category,'fr'),
-          p.brand, p.short.en, p.short.fr, p.desc.en, p.desc.fr].join(' ').toLowerCase();
+          brandNames, p.model||''].join(' ').toLowerCase();
         return hay.indexOf(q) !== -1;
       });
     }
@@ -55,5 +56,5 @@
     initFadeIn();
   }
 
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', function(){ VERIDIAN_DATA.ready.then(init); });
 })();

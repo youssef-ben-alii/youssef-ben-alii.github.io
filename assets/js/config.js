@@ -34,6 +34,16 @@
    Precedence when several are enabled: formEndpoint > emailjs > web3forms.
    ========================================================================== */
 var VERIDIAN_CONFIG = {
+  /* Supabase backs the product/brand catalog and stores quote requests
+     (with a real, server-side sequential reference number). The URL and
+     "publishable"/anon key are meant to be public — they only allow what
+     the database's Row Level Security policies explicitly permit (public
+     read on brands/products, public insert-only on quote_requests). See
+     supabase/migration.sql for the schema. */
+  supabase: {
+    url: "https://yunfkuopiqizjsvejeup.supabase.co",
+    anonKey: "sb_publishable_NuwiR2Rn0z6olQa9p6cKaQ_n8bU73uH"
+  },
   web3forms: {
     enabled: true,
     accessKey: "8940e53c-8b74-49e2-91e1-b7d906654136"

@@ -1,0 +1,67 @@
+name: Supabase keep-alive and catalog backup
+
+# Two independent jobs, both free (GitHub Actions free tier):
+#  - ping: hits Supabase every 10 minutes so the database connection never
+#    goes cold, avoiding the multi-second "wake up" delay on the first
+#    visitor after a quiet period.
+#  - snapshot: once a day, saves a full copy of the brands/products tables
+#    into the site itself (assets/data/catalog-snapshot.json). The site
+#    only ever reads this file if the live Supabase call fails, so normal
+#    browsing is always live/fresh — this is purely a safety net in case
+#    Supabase is ever unreachable.
+#
+# Note: GitHub automatically disables scheduled workflows after 60 days
+# with no commits to the repository. A commit (even unrelated) re-enables
+# it; the "Run workflow" button below also works any time regardless.
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+    - cron: '17 3 * * *'
+  workflow_dispatch: {}
+
+env:
+  SUPABASE_URL: https://yunfkuopiqizjsvejeup.supabase.co
+  SUPABASE_ANON_KEY: sb_publishable_NuwiR2Rn0z6olQa9p6cKaQ_n8bU73uH
+
+permissions:
+  contents: write
+
+jobs:
+  ping:
+    if: github.event.schedule == '*/10 * * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase
+        run: |
+          curl -s -o /dev/null -w "brands ping -> status:%{http_code} time:%{time_total}s\n" \
+            "$SUPABASE_URL/rest/v1/brands?select=id&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY"
+
+  snapshot:
+    if: github.event.schedule == '17 3 * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch current catalog from Supabase
+        run: |
+          curl -sf "$SUPABASE_URL/rest/v1/brands?select=*" \
+            -H "apikey: $SUPABASE_ANON_KEY" -o brands.json
+          curl -sf "$SUPABASE_URL/rest/v1/products?select=*" \
+            -H "apikey: $SUPABASE_ANON_KEY" -o products.json
+
+      - name: Build snapshot file
+        run: |
+          mkdir -p assets/data
+          jq -n --slurpfile brands brands.json --slurpfile products products.json \
+            '{ generatedAt: (now | todate), brands: $brands[0], products: $products[0] }' \
+            > assets/data/catalog-snapshot.json
+
+      - name: Commit snapshot if it changed
+        run: |
+          git config user.name "catalog-backup-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add assets/data/catalog-snapshot.json
+          git diff --staged --quiet || git commit -m "Update catalog backup snapshot [skip ci]"
+          git push

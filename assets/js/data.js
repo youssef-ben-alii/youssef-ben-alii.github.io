@@ -129,22 +129,78 @@ var VERIDIAN_DATA = {
   ]
 };
 
-/* ---------- Populate brands & products from the parsed real inventory ---------- */
-(function(){
-  var NEUTRAL_BRAND_DESC = { en:"Supplier brand referenced in our equipment catalog.", fr:"Marque fournisseur référencée dans notre catalogue d'équipements." };
-  VERIDIAN_DATA.brands = (typeof PARSED_BRANDS !== "undefined" ? PARSED_BRANDS : []).map(function(b){
-    return { id:b.id, name:b.name, desc:NEUTRAL_BRAND_DESC };
+/* ---------- Load brands & products live from Supabase ----------
+   The catalog is no longer bundled as static JS: brands/products live in
+   Supabase (see supabase/migration.sql) and are editable there directly —
+   no code changes or redeploy needed to add/edit a product or brand.
+   VERIDIAN_DATA.brands/products start empty and are filled once
+   VERIDIAN_DATA.ready resolves; every page waits on that promise before
+   rendering (see catalog.js, listing-pages.js, product-detail.js). */
+VERIDIAN_DATA.brands = [];
+VERIDIAN_DATA.products = [];
+
+var VERIDIAN_NEUTRAL_BRAND_DESC = { en:"Supplier brand referenced in our equipment catalog.", fr:"Marque fournisseur référencée dans notre catalogue d'équipements." };
+function veridianMapBrandRow(b){ return { id:b.id, name:b.name, desc:VERIDIAN_NEUTRAL_BRAND_DESC }; }
+function veridianMapProductRow(p){
+  return {
+    id: p.id,
+    type: p.type,
+    category: p.category,
+    brands: p.brand_ids || [],
+    model: p.model || "",
+    icon: ICON_BY_CATEGORY[p.category] || "instrument",
+    slug: { en:p.id, fr:p.id },
+    name: { en:(p.name_en || p.name_fr), fr:p.name_fr }
+  };
+}
+
+/* Live fetch from Supabase, raced against a timeout so a hung/cold
+   connection doesn't leave visitors staring at a blank page for too long. */
+function veridianFetchLiveCatalog(cfg){
+  var client = window.supabase.createClient(cfg.url, cfg.anonKey);
+  var timeout = new Promise(function(_, reject){
+    setTimeout(function(){ reject(new Error("Supabase request timed out")); }, 6000);
   });
-  VERIDIAN_DATA.products = (typeof PARSED_PRODUCTS !== "undefined" ? PARSED_PRODUCTS : []).map(function(p){
-    return {
-      id: p.id,
-      type: p.type,
-      category: p.category,
-      brands: p.brands,
-      model: p.model || "",
-      icon: ICON_BY_CATEGORY[p.category] || "instrument",
-      slug: { en:p.id, fr:p.id },
-      name: { en:(p.name_en || p.name), fr:p.name }
-    };
+  var fetchAll = Promise.all([
+    client.from('brands').select('*'),
+    client.from('products').select('*')
+  ]).then(function(results){
+    var brandsRes = results[0], productsRes = results[1];
+    if(brandsRes.error){ throw new Error(brandsRes.error.message); }
+    if(productsRes.error){ throw new Error(productsRes.error.message); }
+    return { brands: brandsRes.data || [], products: productsRes.data || [] };
   });
-})();
+  return Promise.race([fetchAll, timeout]);
+}
+
+/* Backup snapshot (assets/data/catalog-snapshot.json), refreshed daily by a
+   GitHub Actions job (see .github/workflows/). Only used when the live
+   Supabase call above fails or times out, so it never makes the catalog
+   feel stale in normal operation — it's purely a safety net. */
+function veridianFetchSnapshotCatalog(){
+  return fetch('/assets/data/catalog-snapshot.json').then(function(r){
+    if(!r.ok){ throw new Error("Backup snapshot fetch failed: " + r.status); }
+    return r.json();
+  });
+}
+
+VERIDIAN_DATA.ready = new Promise(function(resolve){
+  document.addEventListener('DOMContentLoaded', function(){
+    var cfg = (window.VERIDIAN_CONFIG || {}).supabase;
+    var attempt = (cfg && cfg.url && window.supabase)
+      ? veridianFetchLiveCatalog(cfg)
+      : Promise.reject(new Error("Supabase is not configured or the client library didn't load"));
+
+    attempt.catch(function(err){
+      console.error("Live catalog fetch failed, falling back to backup snapshot:", err.message || err);
+      return veridianFetchSnapshotCatalog();
+    }).then(function(data){
+      VERIDIAN_DATA.brands = (data.brands || []).map(veridianMapBrandRow);
+      VERIDIAN_DATA.products = (data.products || []).map(veridianMapProductRow);
+      resolve(VERIDIAN_DATA);
+    }).catch(function(err){
+      console.error("Backup snapshot also failed — catalog will be empty:", err);
+      resolve(VERIDIAN_DATA);
+    });
+  });
+});

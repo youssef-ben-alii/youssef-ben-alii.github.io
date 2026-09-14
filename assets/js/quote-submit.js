@@ -1,13 +1,20 @@
 /* ==========================================================================
    MONDO MEDICAL — quote request submission.
-   Builds a reference number + email payload, then attempts delivery via
-   (in order of preference) a configured serverless endpoint, EmailJS, or a
-   mailto: fallback. Always stores the submitted request locally so the
-   confirmation page and the PDF summary can render it.
+   The request is saved as a row in the Supabase "quote_requests" table
+   first — the reference number (QT-YYYY-NNNN) is generated there, in a
+   single shared, ever-increasing sequence (see next_quote_reference() in
+   supabase/migration.sql), so it's correct across every visitor/browser
+   instead of the old per-browser localStorage counter. An email is then
+   still sent via (in order of preference) a configured serverless
+   endpoint, EmailJS, Web3Forms, or a mailto: fallback. Always stores the
+   submitted request locally too, so the confirmation page and the PDF
+   summary can render it.
    ========================================================================== */
 var VQ_LAST_REQUEST_KEY = "veridian_last_request_v1";
 var VQ_REF_COUNTER_KEY = "veridian_ref_counter_v1";
 
+/* Only used if Supabase isn't configured or the insert fails, so the quote
+   flow still works end-to-end (reference just won't be globally unique). */
 function generateQuoteReference(){
   var year = new Date().getFullYear();
   var counter = 1;
@@ -20,6 +27,21 @@ function generateQuoteReference(){
   }
   var padded = String(counter).padStart(4,'0');
   return "QT-"+year+"-"+padded;
+}
+
+function insertQuoteRequestRow(customer, items){
+  var cfg = (window.VERIDIAN_CONFIG || {}).supabase;
+  if(!cfg || !cfg.url || !window.supabase){ return Promise.resolve(null); }
+  var client = window.supabase.createClient(cfg.url, cfg.anonKey);
+  return client.from('quote_requests').insert({
+    customer_type: customer.customerType, first_name: customer.firstName, last_name: customer.lastName,
+    company: customer.company, email: customer.email, phone: customer.phone, country: customer.country,
+    city: customer.city, address: customer.address, contact_method: customer.contactMethod, message: customer.message,
+    items: items
+  }).select().single().then(function(res){
+    if(res.error){ console.error("Supabase quote insert failed:", res.error.message); return null; }
+    return res.data;
+  }).catch(function(err){ console.error("Supabase quote insert failed:", err); return null; });
 }
 
 function buildQuoteEmailText(reference, dateStr, customer, items, lang){
@@ -68,7 +90,13 @@ function loadEmailJsSdk(){
 
 function submitQuoteRequest(customer, lang){
   var items = getQuote();
-  var reference = generateQuoteReference();
+  return insertQuoteRequestRow(customer, items).then(function(dbRow){
+    return finishQuoteSubmission(customer, items, lang, dbRow);
+  });
+}
+
+function finishQuoteSubmission(customer, items, lang, dbRow){
+  var reference = dbRow ? dbRow.reference : generateQuoteReference();
   var now = new Date();
   var dateStr = now.toLocaleDateString(lang === "fr" ? "fr-FR" : "en-GB", {year:"numeric",month:"long",day:"numeric"});
   var subject = (lang === "fr" ? "Nouvelle demande de devis — #" : "New Quote Request — #") + reference;

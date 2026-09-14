@@ -59,6 +59,16 @@ function veridianIcon(name, cls){
   return svg;
 }
 
+/* Base URL (no extension) for a product photo stored in the Supabase Storage
+   "product-photos" bucket — upload a file there named "<id>.jpg" (or
+   "<id>--<brandId>.jpg" for a brand-specific photo) from the Supabase
+   dashboard and it appears on the site automatically, no redeploy needed. */
+function productPhotoUrl(id){
+  var cfg = (window.VERIDIAN_CONFIG || {}).supabase;
+  if(!cfg || !cfg.url || !id) return null;
+  return cfg.url + '/storage/v1/object/public/product-photos/' + id;
+}
+
 /* photoPath (optional): base path WITHOUT extension, e.g. "/pictures/products/some-id",
    OR an array of base paths tried in priority order (e.g. a brand-specific photo first,
    then the generic product photo). For each base, .jpg is tried then .png. The icon

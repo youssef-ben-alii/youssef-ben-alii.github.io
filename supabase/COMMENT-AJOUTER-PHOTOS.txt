@@ -1,5 +1,5 @@
-COMMENT AJOUTER UNE PHOTO A UN PRODUIT
-========================================
+COMMENT AJOUTER UNE PHOTO A UN PRODUIT (via Supabase)
+========================================================
 
 1. Trouvez l'identifiant du produit : ouvrez sa page sur le site, regardez
    l'adresse dans la barre du navigateur. Exemple :
@@ -11,9 +11,18 @@ COMMENT AJOUTER UNE PHOTO A UN PRODUIT
    cet identifiant :
      pince-kocher-15-cm-142.jpg
 
-3. Déposez ce fichier directement dans ce dossier (pictures/products/).
+3. Dans le tableau de bord Supabase de votre projet : allez dans
+   Storage -> product-photos, puis glissez-déposez le fichier dedans.
    C'est tout — la photo apparaît automatiquement sur le site, sur la
-   fiche produit ET sur la carte du catalogue, à la place de l'icône.
+   fiche produit ET sur la carte du catalogue, à la place de l'icône
+   (généralement en quelques secondes, sans rien redéployer).
+
+Photo différente selon la marque :
+   Si le même produit doit avoir une photo différente pour une marque en
+   particulier, nommez le fichier "<identifiant>--<identifiant-marque>.jpg"
+   (ex. "pince-kocher-15-cm-142--aesculap.jpg"). L'identifiant de la marque
+   est visible dans l'URL quand vous filtrez le catalogue par cette marque.
+   Sans photo spécifique, la photo générique du produit s'affiche.
 
 Conseils pour de bonnes performances :
 - Format JPG recommandé (bonne compression), PNG accepté aussi.
@@ -26,7 +35,7 @@ Conseils pour de bonnes performances :
   casse.
 
 --------------------------------------------------------
-HOW TO ADD A PHOTO TO A PRODUCT (English)
+HOW TO ADD A PRODUCT PHOTO (via Supabase) — English
 --------------------------------------------------------
 
 1. Find the product's ID: open its page on the site and look at the
@@ -38,9 +47,17 @@ HOW TO ADD A PHOTO TO A PRODUCT (English)
 2. Save your photo as JPG (or PNG), named EXACTLY like that ID:
      pince-kocher-15-cm-142.jpg
 
-3. Drop that file directly into this folder (pictures/products/). That's
-   it — the photo automatically appears on the product page AND on its
-   catalog card, replacing the icon.
+3. In your Supabase project dashboard: go to Storage -> product-photos,
+   then drag and drop the file in. That's it — the photo automatically
+   appears on the product page AND on its catalog card, replacing the
+   icon (usually within seconds, no redeploy needed).
+
+Brand-specific photo:
+   If the same product should show a different photo for one particular
+   brand, name the file "<id>--<brand-id>.jpg" (e.g.
+   "pince-kocher-15-cm-142--aesculap.jpg"). The brand id is visible in the
+   URL when you filter the catalog by that brand. Without a brand-specific
+   photo, the product's generic photo is used instead.
 
 Tips for good performance:
 - JPG is recommended (good compression); PNG also works.

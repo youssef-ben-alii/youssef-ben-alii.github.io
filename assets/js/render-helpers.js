@@ -37,7 +37,7 @@ function productCardHtml(product, lang){
   return (
     '<a class="card product-card fade-in" href="'+productUrl(product, lang)+'">'+
       '<div class="media">'+
-        veridianPlaceholder(product.icon, product.name[lang], '/pictures/products/'+product.id)+
+        veridianPlaceholder(product.icon, product.name[lang], productPhotoUrl(product.id))+
         (product.featured ? '<span class="tag">'+s.featured+'</span>' : '')+
       '</div>'+
       '<div class="card-body">'+

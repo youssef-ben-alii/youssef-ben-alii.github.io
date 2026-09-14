@@ -53,8 +53,8 @@
       '<a href="'+catUrl+'">'+catLabel+'</a><span>/</span><span>'+product.name[lang]+'</span>';
 
     var photoBases = [];
-    if(selectedBrand){ photoBases.push('/pictures/products/'+product.id+'--'+selectedBrand); }
-    photoBases.push('/pictures/products/'+product.id);
+    if(selectedBrand){ photoBases.push(productPhotoUrl(product.id+'--'+selectedBrand)); }
+    photoBases.push(productPhotoUrl(product.id));
     document.getElementById('pd-gallery-main').innerHTML = veridianPlaceholder(product.icon, product.name[lang], photoBases);
     document.getElementById('pd-thumbs').innerHTML = '';
 
@@ -118,5 +118,5 @@
     initQtyStepper(document.getElementById('pd-qty-scope'), function(){});
   }
 
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', function(){ VERIDIAN_DATA.ready.then(init); });
 })();
