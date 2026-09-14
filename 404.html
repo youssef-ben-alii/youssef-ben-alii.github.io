@@ -116,18 +116,35 @@
     window.ALT_LANG_URL = '/' + altLang + '/' + altBase + '/' + id + '/';
 
     // Load the same scripts a normal product page uses, in the same order.
+    // config.js loads before data.js here (unlike the generated template's
+    // order) because this script runs long after DOMContentLoaded already
+    // fired: data.js's fetch kicks off immediately instead of waiting for
+    // that event (see veridianOnReady in data.js), so VERIDIAN_CONFIG must
+    // already exist by then.
     var scripts = [
       'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
+      '/assets/js/config.js',
       '/assets/js/data.js', '/assets/js/icons.js', '/assets/js/render-helpers.js',
-      '/assets/js/quote.js', '/assets/js/popularity.js', '/assets/js/config.js',
+      '/assets/js/quote.js', '/assets/js/popularity.js',
       '/assets/js/quote-submit.js', '/assets/js/partials.js', '/assets/js/main.js',
       '/assets/js/product-detail.js'
     ];
+    function waitForSupabaseGlobal(cb, triesLeft){
+      // A dynamically-injected script's onload can fire a tick before the
+      // UMD bundle has actually assigned its global in some environments
+      // -- poll briefly rather than trust onload alone for this one script,
+      // since data.js reads window.supabase synchronously right after.
+      if(window.supabase || triesLeft <= 0){ cb(); return; }
+      setTimeout(function(){ waitForSupabaseGlobal(cb, triesLeft - 1); }, 20);
+    }
     function loadNext(i){
       if(i >= scripts.length){ afterScriptsLoaded(); return; }
       var s = document.createElement('script');
       s.src = scripts[i];
-      s.onload = function(){ loadNext(i+1); };
+      s.onload = function(){
+        if(scripts[i].indexOf('supabase-js') !== -1){ waitForSupabaseGlobal(function(){ loadNext(i+1); }, 100); }
+        else { loadNext(i+1); }
+      };
       document.head.appendChild(s);
     }
     function afterScriptsLoaded(){
