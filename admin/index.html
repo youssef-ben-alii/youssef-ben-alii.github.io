@@ -42,7 +42,21 @@
         <button type="button" class="admin-tab" data-tab="products">Catalogue</button>
         <button type="button" class="admin-tab" data-tab="brands">Marques</button>
       </div>
-      <button type="button" class="btn btn-ghost btn-sm" id="admin-logout">Déconnexion</button>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="admin-notif-wrap">
+          <button type="button" class="btn-icon" id="admin-notif-bell" aria-label="Notifications">
+            🔔<span class="admin-tab-badge" id="admin-notif-badge" style="display:none;position:absolute;top:-4px;right:-4px"></span>
+          </button>
+          <div class="admin-notif-panel" id="admin-notif-panel" style="display:none">
+            <div class="admin-notif-panel-head">
+              <strong>Notifications</strong>
+              <button type="button" class="text-link" id="admin-notif-clear" style="font-size:.78rem">Tout marquer comme lu</button>
+            </div>
+            <div id="admin-notif-list"></div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" id="admin-logout">Déconnexion</button>
+      </div>
     </div>
 
     <div class="admin-main">

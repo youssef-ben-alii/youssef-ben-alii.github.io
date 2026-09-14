@@ -141,6 +141,79 @@
     document.getElementById('quotes-new-badge').style.display = 'none';
   }
 
+  /* Notification center: a persistent history (derived straight from
+     quote_requests, no separate table needed) so the admin can see what
+     happened even if they missed the live toast or had the dashboard
+     closed entirely. "Unread" = created after the last time the panel was
+     opened, remembered in localStorage so it survives closing the tab. */
+  var NOTIF_LAST_SEEN_KEY = 'mondo_admin_notif_last_seen';
+  function getNotifLastSeen(){
+    var v = localStorage.getItem(NOTIF_LAST_SEEN_KEY);
+    return v ? new Date(v) : new Date(0);
+  }
+  function setNotifLastSeen(date){
+    try{ localStorage.setItem(NOTIF_LAST_SEEN_KEY, date.toISOString()); }catch(e){}
+  }
+
+  function renderNotifCenter(){
+    var rows = (quoteRowsCache || []).slice(0, 20);
+    var lastSeen = getNotifLastSeen();
+    var unreadCount = (quoteRowsCache || []).filter(function(r){ return new Date(r.created_at) > lastSeen; }).length;
+
+    var badge = document.getElementById('admin-notif-badge');
+    if(unreadCount > 0){ badge.textContent = unreadCount; badge.style.display = 'inline-flex'; }
+    else { badge.style.display = 'none'; }
+
+    var list = document.getElementById('admin-notif-list');
+    if(!rows.length){
+      list.innerHTML = '<div class="admin-notif-empty">Aucune demande de devis pour le moment.</div>';
+      return;
+    }
+    list.innerHTML = rows.map(function(r){
+      var isUnread = new Date(r.created_at) > lastSeen;
+      var who = ((r.first_name||'')+' '+(r.last_name||'')).trim() || 'Client';
+      var when = new Date(r.created_at).toLocaleString('fr-FR', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+      return (
+        '<button type="button" class="admin-notif-item'+(isUnread?' unread':'')+'" data-notif-quote="'+r.id+'">'+
+          '<span class="title">'+escapeHtml(who)+' — '+escapeHtml(r.reference)+'</span>'+
+          '<span class="meta">'+when+'</span>'+
+        '</button>'
+      );
+    }).join('');
+  }
+
+  function toggleNotifPanel(forceOpen){
+    var panel = document.getElementById('admin-notif-panel');
+    var willOpen = forceOpen !== undefined ? forceOpen : panel.style.display === 'none';
+    panel.style.display = willOpen ? 'block' : 'none';
+    if(willOpen){
+      setNotifLastSeen(new Date());
+      renderNotifCenter();
+    }
+  }
+
+  document.getElementById('admin-notif-bell').addEventListener('click', function(e){
+    e.stopPropagation();
+    toggleNotifPanel();
+  });
+  document.getElementById('admin-notif-clear').addEventListener('click', function(){
+    setNotifLastSeen(new Date());
+    renderNotifCenter();
+  });
+  document.getElementById('admin-notif-list').addEventListener('click', function(e){
+    var item = e.target.closest('[data-notif-quote]');
+    if(!item) return;
+    toggleNotifPanel(false);
+    document.getElementById('quotes-search').value = '';
+    renderQuotesTable('');
+    document.querySelector('.admin-tab[data-tab="quotes"]').click();
+    toggleDetailRow(item.getAttribute('data-notif-quote'));
+  });
+  document.addEventListener('click', function(e){
+    var wrap = document.querySelector('.admin-notif-wrap');
+    if(wrap && !wrap.contains(e.target)){ toggleNotifPanel(false); }
+  });
+
   function subscribeQuoteRequestsRealtime(){
     if(window.Notification && Notification.permission === 'default'){ Notification.requestPermission(); }
     client.channel('quote-requests-live')
@@ -149,6 +222,7 @@
         quoteRowsCache = quoteRowsCache ? [row].concat(quoteRowsCache) : [row];
         renderOverviewFromCache();
         renderQuotesTable(document.getElementById('quotes-search').value);
+        renderNotifCenter();
         bumpQuotesBadge();
         var who = ((row.first_name||'')+' '+(row.last_name||'')).trim() || 'Client';
         showAdminToast('Nouvelle demande de devis', who + ' — ' + row.reference, function(){
@@ -196,7 +270,7 @@
   });
 
   function loadOverview(){
-    fetchQuoteRows().then(function(){ renderOverviewFromCache(); });
+    fetchQuoteRows().then(function(){ renderOverviewFromCache(); renderNotifCenter(); });
   }
 
   function periodStart(period){
