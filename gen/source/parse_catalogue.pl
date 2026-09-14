@@ -2,6 +2,21 @@
 use strict; use warnings;
 use utf8;
 binmode(STDOUT, ":encoding(UTF-8)");
+
+# Optional English translations for product/instrument names, keyed by the
+# generated product id (e.g. "aiguille-de-palmere-3" => "Palmer Needle").
+# Falls back to the French name when a translation isn't available yet, so
+# the site keeps working even before every item has been translated.
+our %NAME_EN;
+if (-f "gen/source/translations-en.pl") {
+  open(my $tfh, "<:encoding(UTF-8)", "gen/source/translations-en.pl") or die $!;
+  local $/;
+  my $code = <$tfh>;
+  close($tfh);
+  eval $code;
+  warn "translations-en.pl not loaded: $@" if $@;
+}
+
 open(my $fh, "<:encoding(UTF-8)", "gen/source/catalogue.md") or die $!;
 
 my $brand = "";
@@ -32,6 +47,25 @@ sub normalize_key {
   return $k;
 }
 
+# The source list was hand-transcribed and mixes ALL CAPS, all lowercase and
+# Capitalized entries, plus a few stray periods mid-name (e.g. "adaptateur.
+# Pour uretrotomie"). Normalize every display name the same way: Title Case
+# on alphabetic words, leaving measurements/codes (15cm, D11mm...) untouched.
+sub normalize_display_name {
+  my ($s) = @_;
+  $s =~ s/^\s+|\s+$//g;
+  $s =~ s/\s+/ /g;
+  $s =~ s/(?<!\d)\.(?!\d)//g;
+  $s =~ s/\s+/ /g;
+  $s =~ s/^\s+|\s+$//g;
+  $s =~ s/(?<![\d\p{L}])(\p{L}+)(?!\d)/ucfirst(lc($1))/ge;
+  # A few entries have a stray space between a number and its unit (e.g. "3 Mm"
+  # instead of "3mm"), which the rule above title-cases like a normal word.
+  # Force known unit abbreviations back to lowercase wherever they land.
+  $s =~ s/\b(Mm|Cm|Ml|Kg|Mg)\b/lc($1)/ge;
+  return $s;
+}
+
 while (my $line = <$fh>) {
   chomp $line;
   if ($line =~ /^##\s+(.+?)\s*$/) {
@@ -55,7 +89,7 @@ while (my $line = <$fh>) {
     my $key = normalize_key($rest);
     $type = $type eq "Équipement" ? "equipment" : "instrument";
     if (!exists $products{$key}) {
-      $products{$key} = { type => $type, name => $rest, brands => {} };
+      $products{$key} = { type => $type, name => normalize_display_name($rest), brands => {} };
     }
     $products{$key}{brands}{$brand} = $model if $brand;
     if (defined $model && !defined $products{$key}{brands}{$brand}) {
@@ -154,6 +188,8 @@ for my $key (sort keys %products) {
   my $id = "$slug-$idx";
   my $cat = $p->{type} eq "equipment" ? categorize_equipment($p->{name}) : categorize_instrument($p->{name});
   (my $esc = $p->{name}) =~ s/"/\\"/g;
+  my $nameEn = $NAME_EN{$id} || $p->{name};
+  (my $escEn = $nameEn) =~ s/"/\\"/g;
   my @brandIds;
   my $modelOut = "";
   for my $bn (sort keys %{$p->{brands}}) {
@@ -164,10 +200,11 @@ for my $key (sort keys %products) {
   next unless @brandIds;
   my $brandsJs = join(",", map { "\"$_\"" } @brandIds);
   (my $modelEsc = $modelOut) =~ s/"/\\"/g;
-  print $out2 "  { id:\"$id\", type:\"$p->{type}\", category:\"$cat\", name:\"$esc\", model:\"$modelEsc\", brands:[$brandsJs] },\n";
+  print $out2 "  { id:\"$id\", type:\"$p->{type}\", category:\"$cat\", name:\"$esc\", name_en:\"$escEn\", model:\"$modelEsc\", brands:[$brandsJs] },\n";
 
   # ---- Generate EN + FR detail pages ----
   my $desc = $p->{name}; $desc =~ s/"/&quot;/g;
+  my $descEn = $nameEn; $descEn =~ s/"/&quot;/g;
   my ($en_base, $fr_base, $page_key);
   if ($p->{type} eq "equipment") { $en_base = "/en/equipment/"; $fr_base = "/fr/equipements/"; $page_key = "equipment"; }
   else { $en_base = "/en/instruments/"; $fr_base = "/fr/instruments/"; $page_key = "instruments"; }
@@ -175,7 +212,7 @@ for my $key (sort keys %products) {
   my $fr_url = "$fr_base$id/";
 
   write_page(
-    LANG => "en", PRODUCT_ID => $id, TITLE => $esc, DESC => $desc,
+    LANG => "en", PRODUCT_ID => $id, TITLE => $escEn, DESC => $descEn,
     EN_URL => $en_url, FR_URL => $fr_url, CANONICAL => $en_url, ALT_URL => $fr_url,
     SKIP => "Skip to content", PAGE_KEY => $page_key,
     OUTDIR => "en" . ($p->{type} eq "equipment" ? "/equipment/$id" : "/instruments/$id")

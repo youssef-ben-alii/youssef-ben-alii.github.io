@@ -144,7 +144,7 @@ var VERIDIAN_DATA = {
       model: p.model || "",
       icon: ICON_BY_CATEGORY[p.category] || "instrument",
       slug: { en:p.id, fr:p.id },
-      name: { en:p.name, fr:p.name }
+      name: { en:(p.name_en || p.name), fr:p.name }
     };
   });
 })();

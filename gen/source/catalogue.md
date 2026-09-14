@@ -1,12 +1,9 @@
-## 2A MED IN
+## A2 MEDICAL
 
 - **[Équipement]** Chariot pour rangement panseur bloc opératoire.
 - **[Équipement]** Lits médicalisés
 - **[Équipement]** chariot d'urgence
 - **[Équipement]** chariot de soins
-
-## 2A MEDICA
-
 - **[Instrument]** Boquet en inox pour les salles opératoires
 - **[Instrument]** Support monbile pour bocale d'aspiration 4 l double
 

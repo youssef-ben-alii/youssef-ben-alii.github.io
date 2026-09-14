@@ -1,7 +1,6 @@
 var PARSED_BRANDS = [
-  { id:"2a-med-in", name:"2A MED IN" },
-  { id:"2a-medica", name:"2A MEDICA" },
   { id:"3m-bair-hugger", name:"3M BAIR HUGGER" },
+  { id:"a2-medical", name:"A2 MEDICAL" },
   { id:"acem", name:"ACEM" },
   { id:"ackerma", name:"ACKERMA" },
   { id:"aeonmed", name:"AEONMED" },
