@@ -7,10 +7,10 @@
    ========================================================================== */
 (function(){
   var STR = {
-    en: { all:"All Categories", allBrands:"All Brands", featured:"Featured", newest:"Newest", az:"A–Z",
+    en: { all:"All Categories", allBrands:"All Brands", featured:"Featured", newest:"Newest", az:"A–Z", brand:"Brand",
           results:" results found", result:" result found", noResults:"No equipment found.",
           noResultsSub:"Try adjusting your search or filters." },
-    fr: { all:"Toutes les catégories", allBrands:"Toutes les marques", featured:"En vedette", newest:"Plus récents", az:"A–Z",
+    fr: { all:"Toutes les catégories", allBrands:"Toutes les marques", featured:"En vedette", newest:"Plus récents", az:"A–Z", brand:"Marque",
           results:" résultats trouvés", result:" résultat trouvé", noResults:"Aucun équipement trouvé.",
           noResultsSub:"Essayez de modifier votre recherche ou vos filtres." }
   };
@@ -50,6 +50,7 @@
     sortSelect.options[0].textContent = s.featured;
     sortSelect.options[1].textContent = s.newest;
     sortSelect.options[2].textContent = s.az;
+    sortSelect.options[3].textContent = s.brand;
 
     if(params.get('category')){ catSelect.value = params.get('category'); }
     if(params.get('brand')){ brandSelect.value = params.get('brand'); }
@@ -77,6 +78,12 @@
       });
 
       if(sort === "az"){ items.sort(function(a,b){ return a.name[lang].localeCompare(b.name[lang]); }); }
+      else if(sort === "brand"){
+        items.sort(function(a,b){
+          var an = brandName((a.brands||[])[0] || ''), bn = brandName((b.brands||[])[0] || '');
+          return an.localeCompare(bn) || a.name[lang].localeCompare(b.name[lang]);
+        });
+      }
       else if(sort === "newest"){ items.sort(function(a,b){ return baseProducts.indexOf(b) - baseProducts.indexOf(a); }); }
       else { items.sort(function(a,b){ return getProductViewCount(b.id) - getProductViewCount(a.id) || (b.featured?1:0) - (a.featured?1:0); }); }
 

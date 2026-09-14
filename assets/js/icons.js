@@ -69,6 +69,14 @@ function productPhotoUrl(id){
   return cfg.url + '/storage/v1/object/public/product-photos/' + id;
 }
 
+/* Same idea as productPhotoUrl() but for the "brand-photos" bucket — a
+   brand's own photo/logo, managed from the admin dashboard. */
+function brandPhotoUrl(id){
+  var cfg = (window.VERIDIAN_CONFIG || {}).supabase;
+  if(!cfg || !cfg.url || !id) return null;
+  return cfg.url + '/storage/v1/object/public/brand-photos/' + id;
+}
+
 /* photoPath (optional): base path WITHOUT extension, e.g. "/pictures/products/some-id",
    OR an array of base paths tried in priority order (e.g. a brand-specific photo first,
    then the generic product photo). For each base, .jpg is tried then .png. The icon

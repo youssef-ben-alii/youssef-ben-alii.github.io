@@ -39,6 +39,7 @@
         <button type="button" class="admin-tab active" data-tab="overview">Aperçu</button>
         <button type="button" class="admin-tab" data-tab="quotes">Devis</button>
         <button type="button" class="admin-tab" data-tab="products">Catalogue</button>
+        <button type="button" class="admin-tab" data-tab="brands">Marques</button>
       </div>
       <button type="button" class="btn btn-ghost btn-sm" id="admin-logout">Déconnexion</button>
     </div>
@@ -110,6 +111,47 @@
         </div>
       </section>
 
+      <!-- ---------- Brands ---------- -->
+      <section class="admin-panel" id="panel-brands">
+        <div class="admin-card">
+          <div class="admin-card-head">
+            <h2>Marques</h2>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <input type="search" class="admin-search" id="brands-search" placeholder="Rechercher une marque...">
+              <button type="button" class="btn btn-primary btn-sm" id="brand-add-btn">+ Nouvelle marque</button>
+            </div>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Nom</th><th></th></tr></thead>
+              <tbody id="brands-tbody"></tbody>
+            </table>
+          </div>
+          <p class="body-text" id="brands-empty" style="display:none;margin-top:14px">Aucune marque trouvée.</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ---------- Brand add/edit modal ---------- -->
+  <div class="admin-modal-backdrop" id="brand-modal" style="display:none">
+    <div class="admin-modal" style="max-width:420px">
+      <h2 id="brand-modal-title">Nouvelle marque</h2>
+      <form id="brand-form">
+        <input type="hidden" id="bf-id">
+        <img class="admin-photo-preview" id="bf-photo-preview" style="display:none">
+        <div class="field" style="margin-bottom:14px">
+          <label for="bf-photo">Photo / logo</label>
+          <input type="file" id="bf-photo" accept="image/*">
+        </div>
+        <div class="field"><label for="bf-name">Nom *</label><input type="text" id="bf-name" required></div>
+        <p class="error-msg" id="brand-form-error" style="display:none;margin-top:12px"></p>
+        <div class="admin-modal-actions">
+          <button type="button" class="btn btn-ghost" id="brand-form-cancel">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="brand-form-save">Enregistrer</button>
+        </div>
+      </form>
     </div>
   </div>
 

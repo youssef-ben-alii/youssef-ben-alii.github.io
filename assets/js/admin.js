@@ -40,6 +40,7 @@
   }
 
   function photoUrl(id, ext){ return cfg.url + '/storage/v1/object/public/product-photos/' + id + '.' + ext; }
+  function brandPhotoStorageUrl(id, ext){ return cfg.url + '/storage/v1/object/public/brand-photos/' + id + '.' + ext; }
 
   function escapeHtml(s){
     return String(s==null?'':s).replace(/[&<>"']/g, function(c){
@@ -95,6 +96,7 @@
     loadOverview();
     wireQuotes();
     wireProducts();
+    wireBrands();
   }
 
   /* ==================== OVERVIEW / ANALYTICS ==================== */
@@ -537,6 +539,10 @@
     var descEn = document.getElementById('pf-desc-en').value.trim();
     var brandIds = Array.prototype.slice.call(document.querySelectorAll('#pf-brand-picker input:checked')).map(function(i){ return i.value; });
 
+    if(!brandIds.length && !confirm("Aucune marque cochée pour cet article — l'enregistrer quand même sans marque ?")){
+      return;
+    }
+
     var saveBtn = document.getElementById('product-form-save');
     saveBtn.disabled = true;
 
@@ -591,6 +597,131 @@
     Promise.all([fetchBrands(), fetchProducts()]).then(function(){
       renderProductsTable('');
     });
+  }
+
+  /* ==================== BRANDS ==================== */
+  function renderBrandsTable(filterText){
+    var q = (filterText||'').trim().toLowerCase();
+    var rows = (brandsCache||[]).filter(function(b){ return !q || b.name.toLowerCase().indexOf(q) !== -1; });
+    var tbody = document.getElementById('brands-tbody');
+    var emptyEl = document.getElementById('brands-empty');
+    if(!rows.length){ tbody.innerHTML=''; emptyEl.style.display='block'; return; }
+    emptyEl.style.display = 'none';
+    tbody.innerHTML = rows.map(function(b){
+      return (
+        '<tr>'+
+          '<td>'+escapeHtml(b.name)+'</td>'+
+          '<td style="text-align:right;white-space:nowrap">'+
+            '<button type="button" class="btn btn-outline btn-sm" data-edit-brand="'+b.id+'">Modifier</button> '+
+            '<button type="button" class="btn btn-ghost btn-sm" data-delete-brand="'+b.id+'" style="color:var(--danger)">Supprimer</button>'+
+          '</td>'+
+        '</tr>'
+      );
+    }).join('');
+  }
+
+  var brandModal = document.getElementById('brand-modal');
+  var brandForm = document.getElementById('brand-form');
+  var brandFormError = document.getElementById('brand-form-error');
+  var brandPhotoFile = null;
+
+  function openBrandModal(brand){
+    brandFormError.style.display = 'none';
+    brandForm.reset();
+    brandPhotoFile = null;
+    document.getElementById('bf-id').value = brand ? brand.id : '';
+    document.getElementById('brand-modal-title').textContent = brand ? 'Modifier la marque' : 'Nouvelle marque';
+    document.getElementById('bf-name').value = brand ? brand.name : '';
+
+    var preview = document.getElementById('bf-photo-preview');
+    if(brand){
+      preview.style.display = 'block';
+      preview.setAttribute('data-stage','0');
+      preview.src = brandPhotoStorageUrl(brand.id, 'jpg');
+      preview.onerror = function(){
+        if(preview.getAttribute('data-stage') === '0'){ preview.setAttribute('data-stage','1'); preview.src = brandPhotoStorageUrl(brand.id,'png'); }
+        else { preview.style.display = 'none'; }
+      };
+    } else {
+      preview.style.display = 'none';
+    }
+    brandModal.style.display = 'flex';
+  }
+  function closeBrandModal(){ brandModal.style.display = 'none'; }
+
+  document.getElementById('brand-add-btn').addEventListener('click', function(){ openBrandModal(null); });
+  document.getElementById('brand-form-cancel').addEventListener('click', closeBrandModal);
+  document.getElementById('bf-photo').addEventListener('change', function(e){ brandPhotoFile = e.target.files[0] || null; });
+
+  function uniqueBrandId(name, excludeId){
+    var base = slugify(name) || 'marque';
+    var existingIds = (brandsCache||[]).map(function(b){ return b.id; });
+    if(excludeId) existingIds = existingIds.filter(function(id){ return id !== excludeId; });
+    if(existingIds.indexOf(base) === -1) return base;
+    var n = 2;
+    while(existingIds.indexOf(base + '-' + n) !== -1){ n++; }
+    return base + '-' + n;
+  }
+
+  function uploadBrandPhotoIfAny(id){
+    if(!brandPhotoFile) return Promise.resolve();
+    var ext = /png/i.test(brandPhotoFile.type) ? 'png' : 'jpg';
+    return client.storage.from('brand-photos').upload(id + '.' + ext, brandPhotoFile, { upsert: true, contentType: brandPhotoFile.type })
+      .then(function(res){ if(res.error){ throw new Error(res.error.message); } });
+  }
+
+  brandForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    brandFormError.style.display = 'none';
+    var existingId = document.getElementById('bf-id').value;
+    var name = document.getElementById('bf-name').value.trim();
+    var saveBtn = document.getElementById('brand-form-save');
+    saveBtn.disabled = true;
+
+    var id = existingId || uniqueBrandId(name);
+    var save = existingId
+      ? client.from('brands').update({ name: name }).eq('id', existingId)
+      : client.from('brands').insert({ id: id, name: name });
+
+    save.then(function(res){
+      if(res.error){ throw new Error(res.error.message); }
+      return uploadBrandPhotoIfAny(id);
+    }).then(function(){
+      saveBtn.disabled = false;
+      closeBrandModal();
+      return fetchBrands();
+    }).then(function(){
+      renderBrandsTable(document.getElementById('brands-search').value);
+    }).catch(function(err){
+      saveBtn.disabled = false;
+      brandFormError.textContent = "Erreur : " + err.message;
+      brandFormError.style.display = 'block';
+    });
+  });
+
+  function wireBrands(){
+    document.getElementById('brands-search').addEventListener('input', function(e){
+      renderBrandsTable(e.target.value);
+    });
+    document.getElementById('brands-tbody').addEventListener('click', function(e){
+      var editBtn = e.target.closest('[data-edit-brand]');
+      if(editBtn){
+        var b = (brandsCache||[]).filter(function(x){ return x.id === editBtn.getAttribute('data-edit-brand'); })[0];
+        if(b) openBrandModal(b);
+        return;
+      }
+      var delBtn = e.target.closest('[data-delete-brand]');
+      if(delBtn){
+        var id = delBtn.getAttribute('data-delete-brand');
+        if(!confirm("Supprimer définitivement cette marque ? Les articles qui la référencent ne seront pas modifiés.")) return;
+        client.from('brands').delete().eq('id', id).then(function(res){
+          if(res.error){ alert("Erreur : " + res.error.message); return; }
+          brandsCache = (brandsCache||[]).filter(function(x){ return x.id !== id; });
+          renderBrandsTable(document.getElementById('brands-search').value);
+        });
+      }
+    });
+    fetchBrands().then(function(){ renderBrandsTable(''); });
   }
 
 })();

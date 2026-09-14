@@ -98,7 +98,7 @@
 
     return (
       '<article class="card fade-in">'+
-        photoOpen + veridianPlaceholder('brandmark', b.name) + indicator + photoClose +
+        photoOpen + veridianPlaceholder('brandmark', b.name, brandPhotoUrl(b.id)) + indicator + photoClose +
         '<div class="card-body">'+
           '<h3 class="card-title" style="text-align:left">'+b.name+'</h3>'+
           expandHtml +
