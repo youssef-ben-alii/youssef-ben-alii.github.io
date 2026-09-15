@@ -363,8 +363,11 @@
     emptyEl.style.display = 'none';
 
     var n = bucket.counts.length;
-    var band = 34, barW = 20, chartH = 160, axisY = chartH + 8, labelEvery = n > 15 ? 5 : 1;
-    var width = Math.max(n * band, 320);
+    var containerWidth = wrap.clientWidth || 640;
+    var band = Math.max(34, containerWidth / n);
+    var barW = Math.max(14, Math.min(24, band * 0.55));
+    var chartH = 260, axisY = chartH + 8, labelEvery = n > 15 ? 5 : 1;
+    var width = Math.max(band * n, containerWidth);
     var maxVal = Math.max.apply(null, bucket.counts);
     var niceMax = maxVal <= 5 ? 5 : Math.ceil(maxVal * 1.15);
 
