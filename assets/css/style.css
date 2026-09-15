@@ -380,6 +380,8 @@ table.spec-table td:last-child{color:var(--ink-900);font-weight:500}
 /* ---------- Misc pages ---------- */
 .split-2{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
 @media (max-width:900px){.split-2{grid-template-columns:1fr;gap:36px}}
+.quote-layout{grid-template-columns:1.7fr 1fr}
+@media (max-width:900px){.quote-layout{grid-template-columns:1fr}}
 .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:40px}
 @media (max-width:640px){.stat-row{grid-template-columns:1fr 1fr}}
 .stat-item .num{font-family:'Fraunces',serif;font-size:2.4rem;color:var(--navy-950)}
