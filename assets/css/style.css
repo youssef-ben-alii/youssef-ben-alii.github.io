@@ -179,15 +179,22 @@ button.text-link:hover{color:var(--navy-950)}
   .hero-visual{aspect-ratio:16/10}
 }
 
-/* Hero monitor icon: the ECG trace continuously redraws itself, like a
-   live heartbeat monitor, instead of sitting static. */
-.hero-ecg{stroke-dasharray:70;stroke-dashoffset:70;animation:heroEcgDraw 2.4s linear infinite}
+/* Hero logo mark: the wordmark recreated in-page (not the header's raster
+   file) so its heartbeat line can be animated -- it continuously redraws
+   itself like a live monitor trace instead of sitting static. */
+.hero-logo{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:0 24px}
+.hero-logo-word1{font-family:'Inter',sans-serif;font-weight:800;font-size:clamp(2.1rem,5vw,3.2rem);letter-spacing:.03em;color:#fff;line-height:1}
+.hero-logo-word2{font-family:'Inter',sans-serif;font-weight:800;font-size:clamp(1.5rem,3.4vw,2.2rem);letter-spacing:.09em;color:var(--blue-400);line-height:1;margin-top:2px}
+.hero-logo-tagline{font-family:'Inter',sans-serif;font-weight:600;font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:14px}
+.hero-logo-ecg-svg{width:min(260px,60%);height:34px;display:block;margin:8px 0}
+.hero-logo-ecg{fill:none;stroke:var(--blue-400);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:345;stroke-dashoffset:345;animation:heroEcgDraw 2.4s linear infinite}
 @keyframes heroEcgDraw{
-  0%{stroke-dashoffset:70}
-  100%{stroke-dashoffset:-70}
+  0%{stroke-dashoffset:345}
+  100%{stroke-dashoffset:-345}
 }
 @media (prefers-reduced-motion:reduce){
-  .hero-ecg{animation:none;stroke-dashoffset:0}
+  .hero-logo-ecg{animation:none;stroke-dashoffset:0}
 }
 
 /* ---------- Page header (interior pages) ---------- */
