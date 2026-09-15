@@ -102,6 +102,8 @@ input,textarea,select{font-family:inherit;font-size:1rem}
 .btn-icon:hover{border-color:var(--navy-950)}
 
 .text-link{position:relative;font-weight:600;font-size:.92rem;display:inline-flex;align-items:center;gap:.4em}
+button.text-link{background:none;border:0;padding:0;cursor:pointer;color:var(--blue-500);font-family:inherit}
+button.text-link:hover{color:var(--navy-950)}
 .text-link .arrow{transition:transform .2s var(--ease)}
 .text-link:hover .arrow{transform:translateX(3px)}
 

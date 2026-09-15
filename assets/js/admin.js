@@ -72,9 +72,17 @@
 
   /* ==================== AUTH ==================== */
   var loginWrap = document.getElementById('admin-login');
+  var forgotWrap = document.getElementById('admin-forgot');
+  var resetWrap = document.getElementById('admin-reset');
   var appWrap = document.getElementById('admin-app');
   var loginForm = document.getElementById('admin-login-form');
   var loginError = document.getElementById('admin-login-error');
+  var inPasswordRecovery = false;
+
+  function showOnly(wrap){
+    [loginWrap, forgotWrap, resetWrap, appWrap].forEach(function(w){ w.style.display = 'none'; });
+    wrap.style.display = wrap === appWrap ? 'block' : 'flex';
+  }
 
   loginForm.addEventListener('submit', function(e){
     e.preventDefault();
@@ -89,13 +97,54 @@
     });
   });
 
+  document.getElementById('admin-forgot-link').addEventListener('click', function(){
+    document.getElementById('admin-forgot-email').value = document.getElementById('admin-email').value.trim();
+    document.getElementById('admin-forgot-error').style.display = 'none';
+    document.getElementById('admin-forgot-success').style.display = 'none';
+    showOnly(forgotWrap);
+  });
+  document.getElementById('admin-forgot-cancel').addEventListener('click', function(){
+    showOnly(loginWrap);
+  });
+  document.getElementById('admin-forgot-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var errEl = document.getElementById('admin-forgot-error');
+    var okEl = document.getElementById('admin-forgot-success');
+    errEl.style.display = 'none'; okEl.style.display = 'none';
+    var email = document.getElementById('admin-forgot-email').value.trim();
+    client.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/admin/' }).then(function(res){
+      if(res.error){ errEl.textContent = res.error.message; errEl.style.display = 'block'; return; }
+      okEl.textContent = "E-mail envoyé — vérifiez votre boîte de réception (et vos spams).";
+      okEl.style.display = 'block';
+    });
+  });
+
+  document.getElementById('admin-reset-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var errEl = document.getElementById('admin-reset-error');
+    errEl.style.display = 'none';
+    var newPassword = document.getElementById('admin-new-password').value;
+    client.auth.updateUser({ password: newPassword }).then(function(res){
+      if(res.error){ errEl.textContent = res.error.message; errEl.style.display = 'block'; return; }
+      inPasswordRecovery = false;
+      showOnly(appWrap);
+      initApp();
+    });
+  });
+
   document.getElementById('admin-logout').addEventListener('click', function(){
     client.auth.signOut();
   });
 
-  client.auth.onAuthStateChange(function(_event, session){
-    if(session){ loginWrap.style.display = 'none'; appWrap.style.display = 'block'; initApp(); }
-    else { loginWrap.style.display = 'flex'; appWrap.style.display = 'none'; }
+  client.auth.onAuthStateChange(function(event, session){
+    if(event === 'PASSWORD_RECOVERY'){
+      inPasswordRecovery = true;
+      showOnly(resetWrap);
+      return;
+    }
+    if(inPasswordRecovery) return; // stay on the "set new password" screen until it's submitted
+    if(session){ showOnly(appWrap); initApp(); }
+    else { showOnly(loginWrap); }
   });
 
   /* ==================== TABS ==================== */

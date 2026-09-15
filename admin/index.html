@@ -29,6 +29,37 @@
       </div>
       <p class="error-msg" id="admin-login-error" style="display:none;margin-bottom:10px"></p>
       <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px">Se connecter</button>
+      <button type="button" class="text-link" id="admin-forgot-link" style="margin-top:16px;font-size:.85rem">Mot de passe oublié ?</button>
+    </form>
+  </div>
+
+  <!-- ---------- Forgot password ---------- -->
+  <div class="admin-login-wrap" id="admin-forgot" style="display:none">
+    <form class="admin-login-card" id="admin-forgot-form">
+      <h1>Mot de passe oublié</h1>
+      <p>Indiquez votre e-mail, nous vous enverrons un lien pour choisir un nouveau mot de passe.</p>
+      <div class="field" style="margin-bottom:6px">
+        <label for="admin-forgot-email">E-mail</label>
+        <input type="email" id="admin-forgot-email" required autocomplete="username">
+      </div>
+      <p class="error-msg" id="admin-forgot-error" style="display:none;margin-top:8px"></p>
+      <p class="body-text" id="admin-forgot-success" style="display:none;margin-top:8px;color:#2f7d4f"></p>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px">Envoyer le lien</button>
+      <button type="button" class="text-link" id="admin-forgot-cancel" style="margin-top:16px;font-size:.85rem">Retour à la connexion</button>
+    </form>
+  </div>
+
+  <!-- ---------- Set new password (arriving from the reset email) ---------- -->
+  <div class="admin-login-wrap" id="admin-reset" style="display:none">
+    <form class="admin-login-card" id="admin-reset-form">
+      <h1>Nouveau mot de passe</h1>
+      <p>Choisissez un nouveau mot de passe pour votre compte.</p>
+      <div class="field" style="margin-bottom:6px">
+        <label for="admin-new-password">Nouveau mot de passe</label>
+        <input type="password" id="admin-new-password" required autocomplete="new-password" minlength="6">
+      </div>
+      <p class="error-msg" id="admin-reset-error" style="display:none;margin-top:8px"></p>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px">Enregistrer le mot de passe</button>
     </form>
   </div>
 
