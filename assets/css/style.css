@@ -179,6 +179,17 @@ button.text-link:hover{color:var(--navy-950)}
   .hero-visual{aspect-ratio:16/10}
 }
 
+/* Hero monitor icon: the ECG trace continuously redraws itself, like a
+   live heartbeat monitor, instead of sitting static. */
+.hero-ecg{stroke-dasharray:70;stroke-dashoffset:70;animation:heroEcgDraw 2.4s linear infinite}
+@keyframes heroEcgDraw{
+  0%{stroke-dashoffset:70}
+  100%{stroke-dashoffset:-70}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-ecg{animation:none;stroke-dashoffset:0}
+}
+
 /* ---------- Page header (interior pages) ---------- */
 .page-header{background:var(--navy-950);color:#fff;padding:64px 0 54px}
 .page-header .eyebrow{color:var(--blue-400)}
