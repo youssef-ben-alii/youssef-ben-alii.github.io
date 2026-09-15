@@ -118,16 +118,44 @@
      the dashboard still works, just without live updates. */
   var unreadQuotesCount = 0;
 
-  function showAdminToast(title, message, onClick){
+  function showAdminToast(title, message, onClick, type){
     var stack = document.getElementById('admin-toast-stack');
     var el = document.createElement('div');
-    el.className = 'admin-toast';
+    el.className = 'admin-toast' + (type === 'error' ? ' error' : '');
     el.innerHTML = '<strong></strong><span></span>';
     el.querySelector('strong').textContent = title;
     el.querySelector('span').textContent = message;
     el.addEventListener('click', function(){ el.remove(); if(onClick) onClick(); });
     stack.appendChild(el);
     setTimeout(function(){ el.remove(); }, 8000);
+  }
+
+  function showAdminError(message){
+    showAdminToast('Erreur', message, null, 'error');
+  }
+
+  /* Widget replacement for the native confirm() dialog -- styled like the
+     rest of the dashboard instead of a browser popup. onConfirm runs only
+     if the user clicks "Confirmer". */
+  function showConfirmDialog(message, confirmLabel, onConfirm){
+    var backdrop = document.createElement('div');
+    backdrop.className = 'admin-modal-backdrop';
+    backdrop.style.display = 'flex';
+    backdrop.innerHTML =
+      '<div class="admin-modal" style="max-width:400px">'+
+        '<p class="body-text admin-confirm-message" style="margin-bottom:22px"></p>'+
+        '<div class="admin-modal-actions">'+
+          '<button type="button" class="btn btn-ghost" data-confirm-cancel>Annuler</button>'+
+          '<button type="button" class="btn btn-primary" data-confirm-ok></button>'+
+        '</div>'+
+      '</div>';
+    backdrop.querySelector('.admin-confirm-message').textContent = message;
+    backdrop.querySelector('[data-confirm-ok]').textContent = confirmLabel || 'Confirmer';
+    document.body.appendChild(backdrop);
+    function close(){ backdrop.remove(); }
+    backdrop.querySelector('[data-confirm-cancel]').addEventListener('click', close);
+    backdrop.querySelector('[data-confirm-ok]').addEventListener('click', function(){ close(); onConfirm(); });
+    backdrop.addEventListener('click', function(e){ if(e.target === backdrop) close(); });
   }
 
   function bumpQuotesBadge(){
@@ -536,7 +564,7 @@
         if(!r) return;
         var newStatus = r.status === 'done' ? 'new' : 'done';
         client.from('quote_requests').update({ status: newStatus }).eq('id', id).then(function(res){
-          if(res.error){ alert("Erreur : " + res.error.message); return; }
+          if(res.error){ showAdminError(res.error.message); return; }
           r.status = newStatus;
           renderQuotesTable(document.getElementById('quotes-search').value);
           toggleDetailRow(id);
@@ -751,10 +779,18 @@
     var descEn = document.getElementById('pf-desc-en').value.trim();
     var brandIds = Array.prototype.slice.call(document.querySelectorAll('#pf-brand-picker input:checked')).map(function(i){ return i.value; });
 
-    if(!brandIds.length && !confirm("Aucune marque cochée pour cet article — l'enregistrer quand même sans marque ?")){
+    if(!brandIds.length){
+      showConfirmDialog(
+        "Aucune marque cochée pour cet article — l'enregistrer quand même sans marque ?",
+        "Enregistrer sans marque",
+        function(){ saveProduct(existingId, nameFr, nameEn, type, category, model, descFr, descEn, brandIds); }
+      );
       return;
     }
+    saveProduct(existingId, nameFr, nameEn, type, category, model, descFr, descEn, brandIds);
+  });
 
+  function saveProduct(existingId, nameFr, nameEn, type, category, model, descFr, descEn, brandIds){
     var saveBtn = document.getElementById('product-form-save');
     saveBtn.disabled = true;
 
@@ -784,7 +820,7 @@
       formError.textContent = "Erreur : " + err.message;
       formError.style.display = 'block';
     });
-  });
+  }
 
   function wireProducts(){
     document.getElementById('products-search').addEventListener('input', function(e){
@@ -806,11 +842,12 @@
       var delBtn = e.target.closest('[data-delete]');
       if(delBtn){
         var id = delBtn.getAttribute('data-delete');
-        if(!confirm("Supprimer définitivement cet article ?")) return;
-        client.from('products').delete().eq('id', id).then(function(res){
-          if(res.error){ alert("Erreur : " + res.error.message); return; }
-          productsCache = (productsCache||[]).filter(function(x){ return x.id !== id; });
-          renderProductsTable();
+        showConfirmDialog("Supprimer définitivement cet article ?", "Supprimer", function(){
+          client.from('products').delete().eq('id', id).then(function(res){
+            if(res.error){ showAdminError(res.error.message); return; }
+            productsCache = (productsCache||[]).filter(function(x){ return x.id !== id; });
+            renderProductsTable();
+          });
         });
       }
     });
@@ -936,11 +973,12 @@
       var delBtn = e.target.closest('[data-delete-brand]');
       if(delBtn){
         var id = delBtn.getAttribute('data-delete-brand');
-        if(!confirm("Supprimer définitivement cette marque ? Les articles qui la référencent ne seront pas modifiés.")) return;
-        client.from('brands').delete().eq('id', id).then(function(res){
-          if(res.error){ alert("Erreur : " + res.error.message); return; }
-          brandsCache = (brandsCache||[]).filter(function(x){ return x.id !== id; });
-          renderBrandsTable(document.getElementById('brands-search').value); populateProductsBrandFilter();
+        showConfirmDialog("Supprimer définitivement cette marque ? Les articles qui la référencent ne seront pas modifiés.", "Supprimer", function(){
+          client.from('brands').delete().eq('id', id).then(function(res){
+            if(res.error){ showAdminError(res.error.message); return; }
+            brandsCache = (brandsCache||[]).filter(function(x){ return x.id !== id; });
+            renderBrandsTable(document.getElementById('brands-search').value); populateProductsBrandFilter();
+          });
         });
       }
     });
