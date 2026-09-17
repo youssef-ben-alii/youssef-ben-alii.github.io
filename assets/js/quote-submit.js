@@ -29,19 +29,35 @@ function generateQuoteReference(){
   return "QT-"+year+"-"+padded;
 }
 
+/* Visitors can INSERT a quote request but never read one back (see
+   migration.sql) -- by design, so a random visitor can't list every
+   customer's name/email/phone via the API. That means we can't use
+   .insert(...).select() here: PostgREST evaluates the SELECT-side RLS
+   check for the RETURNING clause too, and since anon has no read access
+   it fails the whole insert with a row-level-security error even though
+   the insert itself would have been perfectly allowed. Instead: fetch
+   the reference number first via the next_quote_reference() RPC (a
+   SECURITY DEFINER function anon is allowed to call), then insert with
+   that reference already set and no .select() (return=minimal), so
+   nothing needs to be read back. */
 function insertQuoteRequestRow(customer, items){
   var cfg = (window.VERIDIAN_CONFIG || {}).supabase;
   if(!cfg || !cfg.url || !window.supabase){ return Promise.resolve(null); }
   var client = window.supabase.createClient(cfg.url, cfg.anonKey);
-  return client.from('quote_requests').insert({
-    customer_type: customer.customerType, first_name: customer.firstName, last_name: customer.lastName,
-    company: customer.company, email: customer.email, phone: customer.phone, country: customer.country,
-    city: customer.city, address: customer.address, contact_method: customer.contactMethod, message: customer.message,
-    items: items
-  }).select().single().then(function(res){
-    if(res.error){ console.error("Supabase quote insert failed:", res.error.message); return null; }
-    return res.data;
-  }).catch(function(err){ console.error("Supabase quote insert failed:", err); return null; });
+  return client.rpc('next_quote_reference').then(function(refRes){
+    if(refRes.error){ throw new Error(refRes.error.message); }
+    var reference = refRes.data;
+    return client.from('quote_requests').insert({
+      reference: reference,
+      customer_type: customer.customerType, first_name: customer.firstName, last_name: customer.lastName,
+      company: customer.company, email: customer.email, phone: customer.phone, country: customer.country,
+      city: customer.city, address: customer.address, contact_method: customer.contactMethod, message: customer.message,
+      items: items
+    }).then(function(res){
+      if(res.error){ throw new Error(res.error.message); }
+      return { reference: reference };
+    });
+  }).catch(function(err){ console.error("Supabase quote insert failed:", err.message || err); return null; });
 }
 
 function buildQuoteEmailText(reference, dateStr, customer, items, lang){
