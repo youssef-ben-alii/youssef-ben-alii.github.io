@@ -815,6 +815,15 @@
     }));
   }
 
+  function findDuplicateProduct(nameFr, nameEn, excludeId){
+    var fr = nameFr.trim().toLowerCase();
+    var en = nameEn.trim().toLowerCase();
+    return (productsCache||[]).filter(function(p){
+      if(p.id === excludeId) return false;
+      return p.name_fr.trim().toLowerCase() === fr || (en && p.name_en.trim().toLowerCase() === en);
+    })[0];
+  }
+
   form.addEventListener('submit', function(e){
     e.preventDefault();
     formError.style.display = 'none';
@@ -827,6 +836,13 @@
     var descFr = document.getElementById('pf-desc-fr').value.trim();
     var descEn = document.getElementById('pf-desc-en').value.trim();
     var brandIds = Array.prototype.slice.call(document.querySelectorAll('#pf-brand-picker input:checked')).map(function(i){ return i.value; });
+
+    var dupProduct = findDuplicateProduct(nameFr, nameEn, existingId);
+    if(dupProduct){
+      formError.textContent = "Un article nommé \"" + dupProduct.name_fr + "\" existe déjà.";
+      formError.style.display = 'block';
+      return;
+    }
 
     if(!brandIds.length){
       showConfirmDialog(
@@ -977,11 +993,26 @@
       .then(function(res){ if(res.error){ throw new Error(res.error.message); } });
   }
 
+  function findDuplicateBrand(name, excludeId){
+    var n = name.trim().toLowerCase();
+    return (brandsCache||[]).filter(function(b){
+      return b.id !== excludeId && b.name.trim().toLowerCase() === n;
+    })[0];
+  }
+
   brandForm.addEventListener('submit', function(e){
     e.preventDefault();
     brandFormError.style.display = 'none';
     var existingId = document.getElementById('bf-id').value;
     var name = document.getElementById('bf-name').value.trim();
+
+    var dupBrand = findDuplicateBrand(name, existingId);
+    if(dupBrand){
+      brandFormError.textContent = "Une marque nommée \"" + dupBrand.name + "\" existe déjà.";
+      brandFormError.style.display = 'block';
+      return;
+    }
+
     var saveBtn = document.getElementById('brand-form-save');
     saveBtn.disabled = true;
 
