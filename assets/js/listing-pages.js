@@ -108,7 +108,7 @@
   }
 
   function serviceIconMap(){
-    return { sourcing:"diagnostic", installation:"hospital", training:"support", support:"support", maintenance:"reliable", aftersales:"tailored" };
+    return { sourcing:"svcSourcing", installation:"svcInstallation", training:"svcTraining", support:"svcSupport", maintenance:"svcMaintenance", aftersales:"svcAftersales" };
   }
 
   function renderServices(){

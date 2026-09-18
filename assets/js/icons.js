@@ -50,7 +50,13 @@ var VERIDIAN_ICONS = {
   bandage:'<svg viewBox="0 0 64 64"><rect x="10" y="26" width="44" height="12" rx="6" transform="rotate(-30 32 32)"/><circle cx="22" cy="35" r="2.5"/><circle cx="42" cy="23" r="2.5"/></svg>',
   brandmark:'<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22"/><path d="M22 34l7 7 13-15"/></svg>',
   chevronDown:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
-  instrument:'<svg viewBox="0 0 64 64"><path d="M20 20L44 44M44 20L20 44"/><circle cx="16" cy="16" r="6"/><circle cx="16" cy="48" r="6"/></svg>'
+  instrument:'<svg viewBox="0 0 64 64"><path d="M20 20L44 44M44 20L20 44"/><circle cx="16" cy="16" r="6"/><circle cx="16" cy="48" r="6"/></svg>',
+  svcSourcing:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10.5V7.5L12 3 4 7.5v9L12 21l2.5-1.4"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/><circle cx="18" cy="17" r="2.6"/><path d="M20 19l2 2"/></svg>',
+  svcInstallation:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+  svcTraining:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/><path d="M22 10v6"/></svg>',
+  svcSupport:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14v-2a9 9 0 0 1 18 0v2"/><path d="M21 15a2 2 0 0 1-2 2h-1v-6h3z"/><path d="M3 15a2 2 0 0 0 2 2h1v-6H3z"/><path d="M21 17v1a3 3 0 0 1-3 3h-4"/></svg>',
+  svcMaintenance:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/><path d="M8.5 15.5l2.5 2.5 4.5-4.5"/></svg>',
+  svcAftersales:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 0 0-7.1 7.1L12 21l8.8-8.3a5 5 0 0 0 0-7.1z"/><path d="M6.5 12h3l1.5-2.5 2 4 1.5-1.5h3"/></svg>'
 };
 
 function veridianIcon(name, cls){
