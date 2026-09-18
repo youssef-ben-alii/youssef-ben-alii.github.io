@@ -152,7 +152,42 @@
       );
     }).join('');
     initFadeIn();
+    renderIndustryNews(mount);
   }
+
+  function renderIndustryNews(afterMount){
+    var t = lang === 'fr'
+      ? {eyebrow:'Actualités du secteur', title:'Dernières nouvelles de la FDA et de l’OMS', note:'Titres en anglais, mis à jour automatiquement. Source originale :', read:'Lire sur le site d’origine'}
+      : {eyebrow:'Industry news', title:'Latest from the FDA and WHO', note:'Headlines refreshed automatically. Original source:', read:'Read on the original site'};
+    fetch('/assets/data/industry-news.json').then(function(r){ return r.ok ? r.json() : null; }).then(function(data){
+      if(!data || !data.items || !data.items.length) return;
+      var host = afterMount.closest('section');
+      if(!host) return;
+      var sec = document.createElement('section');
+      sec.innerHTML =
+        '<div class="container">'+
+          '<div class="eyebrow">'+t.eyebrow+'</div>'+
+          '<h2 class="h-lg" style="margin-bottom:8px">'+t.title+'</h2>'+
+          '<div class="grid grid-3" id="industry-news-grid" style="margin-top:28px"></div>'+
+        '</div>';
+      host.parentNode.insertBefore(sec, host.nextSibling);
+      var loc = lang==='fr'?'fr-FR':'en-GB';
+      sec.querySelector('#industry-news-grid').innerHTML = data.items.map(function(it){
+        var d = new Date(it.date).toLocaleDateString(loc,{year:'numeric',month:'long',day:'numeric'});
+        return (
+          '<article class="card fade-in in-view">'+
+            '<div class="card-body">'+
+              '<div class="card-eyebrow">'+escNews(it.source)+' · '+d+'</div>'+
+              '<h3 class="card-title"><a href="'+escNews(it.url)+'" target="_blank" rel="noopener noreferrer">'+escNews(it.title)+'</a></h3>'+
+              '<p class="card-desc">'+escNews(it.excerpt)+'</p>'+
+              '<a href="'+escNews(it.url)+'" target="_blank" rel="noopener noreferrer" class="text-link" style="margin-top:14px">'+t.read+' <span class="arrow">'+veridianIcon('arrow')+'</span></a>'+
+            '</div>'+
+          '</article>'
+        );
+      }).join('');
+    }).catch(function(){});
+  }
+  function escNews(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   veridianOnReady(function(){
     VERIDIAN_DATA.ready.then(function(){
