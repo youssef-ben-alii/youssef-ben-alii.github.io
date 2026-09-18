@@ -134,45 +134,12 @@
   function renderNewsIndex(){
     var mount = document.getElementById('news-grid');
     if(!mount) return;
-    var base = lang === 'fr' ? '/fr/actualites/' : '/en/news/';
-    var s = lang === 'fr' ? {read:'Lire l’article'} : {read:'Read Article'};
-    var sorted = VERIDIAN_DATA.news.slice().sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
-    mount.innerHTML = sorted.map(function(r){
-      var href = base + r.id + '/';
-      return (
-        '<article class="card fade-in">'+
-          '<a class="media" href="'+href+'">'+veridianPlaceholder('diagnostic', r.title[lang])+'</a>'+
-          '<div class="card-body">'+
-            '<div class="card-eyebrow">'+new Date(r.date).toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{year:'numeric',month:'long',day:'numeric'})+'</div>'+
-            '<h3 class="card-title"><a href="'+href+'">'+r.title[lang]+'</a></h3>'+
-            '<p class="card-desc">'+r.excerpt[lang]+'</p>'+
-            '<a href="'+href+'" class="text-link" style="margin-top:14px">'+s.read+' <span class="arrow">'+veridianIcon('arrow')+'</span></a>'+
-          '</div>'+
-        '</article>'
-      );
-    }).join('');
-    initFadeIn();
-    renderIndustryNews(mount);
-  }
-
-  function renderIndustryNews(afterMount){
-    var t = lang === 'fr'
-      ? {eyebrow:'Actualités du secteur', title:'Dernières nouvelles de la FDA et de l’OMS', note:'Titres en anglais, mis à jour automatiquement. Source originale :', read:'Lire sur le site d’origine'}
-      : {eyebrow:'Industry news', title:'Latest from the FDA and WHO', note:'Headlines refreshed automatically. Original source:', read:'Read on the original site'};
+    var read = lang === 'fr' ? 'Lire sur le site d’origine' : 'Read on the original site';
+    var empty = lang === 'fr' ? 'Les actualités ne sont pas disponibles pour le moment.' : 'News is not available right now.';
+    var loc = lang === 'fr' ? 'fr-FR' : 'en-GB';
     fetch('/assets/data/industry-news.json').then(function(r){ return r.ok ? r.json() : null; }).then(function(data){
-      if(!data || !data.items || !data.items.length) return;
-      var host = afterMount.closest('section');
-      if(!host) return;
-      var sec = document.createElement('section');
-      sec.innerHTML =
-        '<div class="container">'+
-          '<div class="eyebrow">'+t.eyebrow+'</div>'+
-          '<h2 class="h-lg" style="margin-bottom:8px">'+t.title+'</h2>'+
-          '<div class="grid grid-3" id="industry-news-grid" style="margin-top:28px"></div>'+
-        '</div>';
-      host.parentNode.insertBefore(sec, host.nextSibling);
-      var loc = lang==='fr'?'fr-FR':'en-GB';
-      sec.querySelector('#industry-news-grid').innerHTML = data.items.map(function(it){
+      if(!data || !data.items || !data.items.length){ mount.innerHTML = '<p class="body-text">'+empty+'</p>'; return; }
+      mount.innerHTML = data.items.map(function(it){
         var d = new Date(it.date).toLocaleDateString(loc,{year:'numeric',month:'long',day:'numeric'});
         return (
           '<article class="card fade-in in-view">'+
@@ -180,12 +147,12 @@
               '<div class="card-eyebrow">'+escNews(it.source)+' · '+d+'</div>'+
               '<h3 class="card-title"><a href="'+escNews(it.url)+'" target="_blank" rel="noopener noreferrer">'+escNews(it.title)+'</a></h3>'+
               '<p class="card-desc">'+escNews(it.excerpt)+'</p>'+
-              '<a href="'+escNews(it.url)+'" target="_blank" rel="noopener noreferrer" class="text-link" style="margin-top:14px">'+t.read+' <span class="arrow">'+veridianIcon('arrow')+'</span></a>'+
+              '<a href="'+escNews(it.url)+'" target="_blank" rel="noopener noreferrer" class="text-link" style="margin-top:14px">'+read+' <span class="arrow">'+veridianIcon('arrow')+'</span></a>'+
             '</div>'+
           '</article>'
         );
       }).join('');
-    }).catch(function(){});
+    }).catch(function(){ mount.innerHTML = '<p class="body-text">'+empty+'</p>'; });
   }
   function escNews(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
