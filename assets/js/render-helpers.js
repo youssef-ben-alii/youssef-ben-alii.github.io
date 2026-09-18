@@ -49,13 +49,30 @@ function productCardHtml(product, lang){
   );
 }
 
+/* Category id -> the filename you gave me for that category's photo,
+   dropped in /pictures/categories/. No file yet for a given category?
+   The generic icon keeps showing there, nothing breaks. */
+var CATEGORY_PHOTO_FILE = {
+  "bloc-operatoire": "bloc",
+  "imagerie": "imagerie",
+  "laboratoire": "labo",
+  "monitoring": "monitoring",
+  "mobilier-transport": "transport",
+  "reanimation": "reanimation",
+  "autre": "divers"
+};
+function categoryPhotoUrl(catId){
+  var file = CATEGORY_PHOTO_FILE[catId];
+  return file ? "/pictures/categories/" + file : null;
+}
+
 function categoryCardHtml(cat, lang, baseUrl){
   var s = VQ_STR[lang];
   var base = baseUrl || productEquipmentBase(lang);
   var href = base + "?category=" + cat.id;
   return (
     '<article class="card category-card fade-in">'+
-      '<a class="media" href="'+href+'">'+veridianPlaceholder(cat.icon, cat.name[lang])+'</a>'+
+      '<a class="media" href="'+href+'">'+veridianPlaceholder(cat.icon, cat.name[lang], categoryPhotoUrl(cat.id))+'</a>'+
       '<div class="card-body">'+
         '<h3 class="card-title">'+cat.name[lang]+'</h3>'+
         '<p class="card-desc">'+cat.desc[lang]+'</p>'+

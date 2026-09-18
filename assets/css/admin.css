@@ -119,3 +119,49 @@ table.admin-table tr:hover td{background:var(--line-soft)}
   .admin-brand-picker{grid-template-columns:1fr}
   .admin-main{padding:18px}
 }
+
+/* ---- Mobile: stacked cards instead of horizontally-scrolling tables ---- */
+@media (max-width:720px){
+  .admin-topbar{padding:12px 16px;gap:10px}
+  .admin-tabs{width:100%;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+  .admin-tabs::-webkit-scrollbar{display:none}
+  .admin-tab{white-space:nowrap;flex:none;padding:.6em 1em}
+  .admin-main{padding:14px}
+  .admin-card{padding:16px}
+  .admin-stats{grid-template-columns:1fr 1fr;gap:10px}
+  .admin-stat{padding:14px}
+  .admin-stat .value{font-size:1.5rem}
+  .admin-card-head{align-items:stretch}
+  .admin-card-head .admin-search{width:100%;min-width:0;flex:1 1 100%}
+  .admin-card-head .btn{width:100%}
+  .admin-period-group{width:100%}
+  .admin-period-btn{flex:1;padding:.7em .5em}
+  .admin-toast-stack{left:12px;right:12px;top:12px;max-width:none}
+  .admin-modal-backdrop{padding:0;align-items:stretch}
+  .admin-modal{max-width:none;border-radius:0;min-height:100%;padding:20px 16px}
+  .admin-modal-actions{position:sticky;bottom:0;background:#fff;padding:12px 0;margin-top:16px;border-top:1px solid var(--line-soft)}
+  .admin-modal-actions .btn{flex:1}
+  .admin-login-card{padding:28px 20px}
+  .btn,.admin-tab,.admin-period-btn,.admin-search{min-height:44px}
+
+  .admin-table-wrap{overflow-x:visible}
+  table.admin-table,table.admin-table tbody,table.admin-table tr,table.admin-table td{display:block;width:100%}
+  table.admin-table thead{display:none}
+  table.admin-table tr{background:#fff;border:1px solid var(--line);border-radius:var(--radius-m);padding:6px 12px;margin-bottom:10px}
+  table.admin-table tr:hover td{background:none}
+  table.admin-table td{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 0;border-bottom:1px solid var(--line-soft);text-align:right!important;white-space:normal!important;word-break:break-word}
+  table.admin-table td:last-child{border-bottom:0;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+  table.admin-table td[colspan]{display:block;text-align:left!important}
+  table.admin-table tr.admin-row-detail{background:var(--paper-off,#f7f6f3);margin-top:-6px}
+  table.admin-table tr.admin-row-detail td{display:block;padding:8px 0}
+  table.admin-table-quotes td:nth-child(1)::before{content:"Référence"}
+  table.admin-table-quotes td:nth-child(2)::before{content:"Date"}
+  table.admin-table-quotes td:nth-child(3)::before{content:"Client"}
+  table.admin-table-quotes td:nth-child(4)::before{content:"Statut"}
+  table.admin-table-products td:nth-child(1)::before{content:"Nom"}
+  table.admin-table-products td:nth-child(2)::before{content:"Type"}
+  table.admin-table-products td:nth-child(3)::before{content:"Catégorie"}
+  table.admin-table-products td:nth-child(4)::before{content:"Marques"}
+  table.admin-table-quotes td:not(:last-child)::before,table.admin-table-products td:not(:last-child)::before{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-500);text-align:left;flex:none}
+  table.admin-table td[colspan]::before{content:none!important}
+}

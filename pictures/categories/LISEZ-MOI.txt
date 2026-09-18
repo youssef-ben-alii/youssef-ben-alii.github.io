@@ -1,0 +1,21 @@
+PHOTOS DES CATEGORIES (page d'accueil)
+========================================
+
+Déposez vos photos directement dans ce dossier, nommées EXACTEMENT comme
+ci-dessous (JPG ou PNG). Dès que le fichier est là, il remplace l'icône
+générique automatiquement sur la page d'accueil — rien d'autre à faire.
+
+  bloc.jpg         -> Bloc opératoire
+  imagerie.jpg     -> Imagerie
+  labo.jpg         -> Laboratoire
+  monitoring.jpg   -> Monitoring et surveillance
+  transport.jpg    -> Mobilier et transport
+  reanimation.jpg  -> Réanimation et anesthésie
+  divers.jpg       -> Autres équipements
+
+Conseils :
+- Taille recommandée : environ 800x600 pixels.
+- Poids recommandé : 40-120 Ko par photo (compressez avant d'ajouter).
+- PNG accepté aussi si le JPG n'existe pas pour une catégorie.
+- Aucune catégorie sans photo ? L'icône générique reste affichée,
+  rien ne casse.

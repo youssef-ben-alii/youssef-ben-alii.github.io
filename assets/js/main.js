@@ -3,7 +3,10 @@
    ========================================================================== */
 
 /* ---------- Toast ---------- */
-function showToast(message){
+/* href (optional): if given, the whole toast becomes clickable/focusable
+   (mobile and desktop) and navigates there — used for "added to your
+   quote" so tapping it jumps straight to My Quote. */
+function showToast(message, href){
   var region = document.getElementById('toast-region');
   if(!region){
     region = document.createElement('div');
@@ -11,8 +14,12 @@ function showToast(message){
     region.setAttribute('aria-live','polite');
     document.body.appendChild(region);
   }
-  var toast = document.createElement('div');
+  var toast = document.createElement(href ? 'a' : 'div');
   toast.className = 'toast';
+  if(href){
+    toast.href = href;
+    toast.classList.add('toast-clickable');
+  }
   toast.innerHTML = (window.veridianIcon ? veridianIcon('checkCircle') : '') + '<span>'+message+'</span>';
   region.appendChild(toast);
   requestAnimationFrame(function(){ toast.classList.add('show'); });

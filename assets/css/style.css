@@ -377,6 +377,8 @@ table.spec-table td:last-child{color:var(--ink-900);font-weight:500}
 .toast{background:var(--navy-950);color:#fff;padding:16px 18px;border-radius:var(--radius-s);box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:12px;font-size:.88rem;transform:translateY(12px);opacity:0;transition:transform .3s var(--ease),opacity .3s var(--ease)}
 .toast.show{transform:translateY(0);opacity:1}
 .toast svg{flex:none;width:20px;height:20px;color:#7fd3a8}
+.toast-clickable{cursor:pointer;text-decoration:none}
+.toast-clickable:hover,.toast-clickable:focus-visible{background:var(--blue-500)}
 
 /* ---------- Footer ---------- */
 .site-footer{background:var(--navy-950);color:rgba(255,255,255,.65);padding:76px 0 0}

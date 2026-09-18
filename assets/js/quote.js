@@ -58,7 +58,8 @@ function addToQuote(productId, qty, brand){
   saveQuote(items);
   var lang = window.PAGE_LANG || "en";
   var label = lang === "fr" ? (product.name.fr + " ajouté à votre demande de devis.") : (product.name.en + " added to your quote.");
-  if(window.showToast) showToast(label);
+  var quoteUrl = lang === "fr" ? "/fr/devis/" : "/en/quote/";
+  if(window.showToast) showToast(label, quoteUrl);
 }
 
 function removeFromQuote(lineKey){
