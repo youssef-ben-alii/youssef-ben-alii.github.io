@@ -615,6 +615,7 @@
         client.from('quote_requests').update({ status: newStatus }).eq('id', id).then(function(res){
           if(res.error){ showAdminError(res.error.message); return; }
           r.status = newStatus;
+          renderOverviewFromCache();
           renderQuotesTable(document.getElementById('quotes-search').value);
           toggleDetailRow(id);
         });

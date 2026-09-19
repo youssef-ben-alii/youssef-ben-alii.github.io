@@ -5,6 +5,8 @@
 
 :root{
   --navy-950:#0a1628;
+  --band:#02367b;
+  --on-band:#8fbdf0;
   --navy-900:#0e1f38;
   --navy-800:#142a4a;
   --navy-700:#1c3a63;
@@ -162,13 +164,13 @@ button.text-link:hover{color:var(--navy-950)}
 .mobile-drawer .m-actions{margin-top:auto;display:flex;flex-direction:column;gap:10px}
 
 /* ---------- Hero ---------- */
-.hero{position:relative;background:var(--navy-950);color:#fff;overflow:hidden}
-.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center;padding:96px 0 84px}
-.hero .eyebrow{color:var(--blue-400)}
+.hero{position:relative;background:var(--band);color:#fff;overflow:hidden;padding:0}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center;padding:60px 0 56px}
+.hero .eyebrow{color:var(--on-band)}
 .hero h1{color:#fff;margin-top:14px}
 .hero .lede{color:rgba(255,255,255,.72);margin-top:20px}
 .hero .actions{display:flex;gap:14px;margin-top:36px;flex-wrap:wrap}
-.hero-visual{position:relative;aspect-ratio:4/5;border-radius:var(--radius-m);overflow:hidden}
+.hero-visual{position:relative;aspect-ratio:4/3;max-height:340px;margin-left:auto;width:100%;border-radius:var(--radius-m);overflow:hidden}
 .hero-bg-fx{position:absolute;inset:0;background:
   radial-gradient(60% 50% at 80% 10%, rgba(74,139,201,.35), transparent 60%),
   radial-gradient(50% 60% at 0% 100%, rgba(74,139,201,.18), transparent 60%);
@@ -184,10 +186,10 @@ button.text-link:hover{color:var(--navy-950)}
    itself like a live monitor trace instead of sitting static. */
 .hero-logo{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;width:100%;text-align:center;padding:0 20px}
 .hero-logo-word1{font-family:'Inter',sans-serif;font-weight:800;font-size:clamp(2.8rem,9vw,5.2rem);letter-spacing:.03em;color:#fff;line-height:1}
-.hero-logo-word2{font-family:'Inter',sans-serif;font-weight:800;font-size:clamp(2rem,6vw,3.6rem);letter-spacing:.08em;color:var(--blue-400);line-height:1;margin-top:4px}
+.hero-logo-word2{font-family:'Inter',sans-serif;font-weight:800;font-size:clamp(2rem,6vw,3.6rem);letter-spacing:.08em;color:var(--on-band);line-height:1;margin-top:4px}
 .hero-logo-tagline{font-family:'Inter',sans-serif;font-weight:600;font-size:clamp(.66rem,1.6vw,.9rem);letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:16px}
 .hero-logo-ecg-svg{width:min(400px,80%);height:52px;display:block;margin:10px 0}
-.hero-logo-ecg{fill:none;stroke:var(--blue-400);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;
+.hero-logo-ecg{fill:none;stroke:var(--on-band);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;
   stroke-dasharray:345;stroke-dashoffset:345;animation:heroEcgDraw 2.4s linear infinite}
 @keyframes heroEcgDraw{
   0%{stroke-dashoffset:345}
@@ -198,8 +200,8 @@ button.text-link:hover{color:var(--navy-950)}
 }
 
 /* ---------- Page header (interior pages) ---------- */
-.page-header{background:var(--navy-950);color:#fff;padding:64px 0 54px}
-.page-header .eyebrow{color:var(--blue-400)}
+.page-header{background:var(--band);color:#fff;padding:64px 0 54px}
+.page-header .eyebrow{color:var(--on-band)}
 .page-header h1{color:#fff;margin-top:12px}
 .page-header .lede{color:rgba(255,255,255,.7);margin-top:14px}
 .breadcrumb{display:flex;gap:8px;align-items:center;font-size:.8rem;color:rgba(255,255,255,.55);margin-bottom:18px}
@@ -213,7 +215,7 @@ section{padding:88px 0}
 .section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:44px}
 .section-head h2{margin-top:10px}
 .bg-off{background:var(--paper-off)}
-.bg-navy{background:var(--navy-950);color:#fff}
+.bg-navy{background:var(--band);color:#fff}
 .bg-navy h2,.bg-navy h3{color:#fff}
 .divider{height:1px;background:var(--line);border:0;margin:0}
 
@@ -381,7 +383,7 @@ table.spec-table td:last-child{color:var(--ink-900);font-weight:500}
 .toast-clickable:hover,.toast-clickable:focus-visible{background:var(--blue-500)}
 
 /* ---------- Footer ---------- */
-.site-footer{background:var(--navy-950);color:rgba(255,255,255,.65);padding:76px 0 0}
+.site-footer{background:var(--band);color:rgba(255,255,255,.65);padding:76px 0 0}
 .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:40px}
 @media (max-width:900px){.footer-grid{grid-template-columns:1fr 1fr;row-gap:40px}}
 @media (max-width:560px){.footer-grid{grid-template-columns:1fr}}

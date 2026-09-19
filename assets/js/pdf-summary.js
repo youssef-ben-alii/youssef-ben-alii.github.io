@@ -39,7 +39,13 @@ function buildQuoteSummaryPdf(record, logoImg){
     y -= 4;
   }
 
-  y += 46;
+  y += 8;
+  doc.setFont("helvetica","bold"); doc.setFontSize(10); doc.setTextColor(59,69,82);
+  doc.text((isFr ? "Référence : " : "Reference: ") + record.reference, margin, y);
+  y += 15;
+  doc.setFont("helvetica","normal");
+  doc.text((isFr ? "Date : " : "Date: ") + record.date, margin, y);
+  y += 20;
   doc.setDrawColor(228,231,234); doc.line(margin, y, pageWidth-margin, y);
   y += 32;
 
@@ -50,10 +56,7 @@ function buildQuoteSummaryPdf(record, logoImg){
   doc.text(isFr ? "Ceci n'est pas un devis officiel — récapitulatif de votre demande uniquement." : "This is not an official quotation — a summary of your request only.", margin, y);
   y += 26;
 
-  doc.setFontSize(10); doc.setTextColor(59,69,82);
-  doc.text((isFr ? "Référence : " : "Reference: ") + record.reference, margin, y);
-  doc.text((isFr ? "Date : " : "Date: ") + record.date, pageWidth/2, y);
-  y += 30;
+  y += 4;
 
   doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.setTextColor(10,22,40);
   doc.text(isFr ? "Informations client" : "Customer Information", margin, y);
