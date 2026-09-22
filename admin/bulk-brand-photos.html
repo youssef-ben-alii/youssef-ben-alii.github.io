@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Envoi groupé des photos de marques — Mondo Medical</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/admin.css">
+<style>
+  .bp-wrap{max-width:980px;margin:0 auto;padding:32px 20px 80px}
+  .bp-row{display:flex;align-items:center;gap:14px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-s);margin-bottom:8px;background:#fff}
+  .bp-row img{width:44px;height:44px;object-fit:contain;background:var(--paper-off);border-radius:4px;flex:none}
+  .bp-row .name{flex:1;font-size:.9rem}
+  .bp-row .name b{display:block;color:var(--navy-950)}
+  .bp-row .name span{color:var(--ink-500);font-size:.78rem}
+  .bp-status{font-size:.78rem;font-weight:700;min-width:110px;text-align:right}
+  .bp-status.pending{color:var(--ink-500)}
+  .bp-status.ok{color:#2f7d4f}
+  .bp-status.err{color:var(--danger)}
+  .bp-skip{opacity:.7}
+  .bp-select{font-size:.82rem;padding:4px 6px}
+  .bp-summary{position:sticky;top:0;background:var(--paper-off);padding:14px 0;z-index:5;margin-bottom:16px}
+</style>
+</head>
+<body>
+<div class="admin-toast-stack" id="admin-toast-stack"></div>
+<div class="admin-shell">
+
+  <div class="admin-login-wrap" id="admin-login">
+    <form class="admin-login-card" id="admin-login-form">
+      <h1>Envoi des photos de marques</h1>
+      <p>Connectez-vous avec votre compte administrateur pour lancer l'envoi. Rien n'est envoyé nulle part d'autre que votre propre Supabase.</p>
+      <div class="field" style="margin-bottom:14px">
+        <label for="admin-email">E-mail</label>
+        <input type="email" id="admin-email" required autocomplete="username">
+      </div>
+      <div class="field" style="margin-bottom:6px">
+        <label for="admin-password">Mot de passe</label>
+        <input type="password" id="admin-password" required autocomplete="current-password">
+      </div>
+      <p class="error-msg" id="admin-login-error" style="display:none;margin-bottom:10px"></p>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px">Se connecter</button>
+    </form>
+  </div>
+
+  <div id="bp-app" style="display:none">
+    <div class="admin-topbar">
+      <div class="admin-brand">
+        <img src="/pictures/logo.png" alt="Mondo Medical" class="admin-logo-img">
+        <span class="wordmark">Photos de marques</span>
+      </div>
+      <a href="/admin/" class="btn btn-outline btn-sm">Retour au tableau de bord</a>
+    </div>
+    <div class="bp-wrap">
+      <div class="bp-summary admin-card">
+        <p class="body-text" style="margin-bottom:12px">
+          121 photos ont été reconnues automatiquement d'après le nom du fichier. Vérifiez la liste, puis lancez l'envoi.
+          Une photo déjà envoyée pour une marque sera remplacée.
+        </p>
+        <button type="button" class="btn btn-primary" id="bp-upload-all">Tout envoyer (<span id="bp-count-pending">121</span>)</button>
+        <span id="bp-progress" class="body-text" style="margin-left:14px"></span>
+      </div>
+
+      <h2 class="h-sm" style="margin-bottom:10px">À corriger manuellement (6)</h2>
+      <p class="body-text" style="margin-bottom:14px">Ces fichiers n'ont pas pu être associés automatiquement. Choisissez une marque si vous reconnaissez le logo, ou laissez « Ignorer ».</p>
+      <div id="bp-skip-list"></div>
+
+      <h2 class="h-sm" style="margin:28px 0 10px">Photos reconnues automatiquement (121)</h2>
+      <div id="bp-list"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/assets/js/config.js"></script>
+<script>
+var MATCHED = [{"file": "3M.png", "ext": "png", "id": "3m-bair-hugger", "name": "3M BAIR HUGGER"}, {"file": "ACEM.jpg", "ext": "jpg", "id": "acem", "name": "ACEM"}, {"file": "AESCULAP.jpg", "ext": "jpg", "id": "aesculap", "name": "AESCULAP"}, {"file": "AIR LIQUIDE MEDICAL SYSTEMS.jpg", "ext": "jpg", "id": "air-liquide-medical-systems", "name": "AIR LIQUIDE MEDICAL SYSTEMS"}, {"file": "AIRON.png", "ext": "png", "id": "airon", "name": "AIRON"}, {"file": "ALLENGERS.jpg", "ext": "jpg", "id": "allengers", "name": "ALLENGERS"}, {"file": "AMEL.png", "ext": "png", "id": "amel", "name": "AMEL"}, {"file": "ANGELL.png", "ext": "png", "id": "angell", "name": "ANGELL"}, {"file": "AOUHA.jpg", "ext": "jpg", "id": "aouha", "name": "AOUHA"}, {"file": "AT-OS.png", "ext": "png", "id": "at-os", "name": "AT-OS"}, {"file": "AURION.png", "ext": "png", "id": "aurion", "name": "AURION"}, {"file": "AYGUN.png", "ext": "png", "id": "aygun", "name": "AYGUN"}, {"file": "Ackermann.png", "ext": "png", "id": "ackerma", "name": "ACKERMA"}, {"file": "BEMEMS.png", "ext": "png", "id": "bemems", "name": "BEMEMS"}, {"file": "BIOCARE.png", "ext": "png", "id": "biocare", "name": "BIOCARE"}, {"file": "BLT.png", "ext": "png", "id": "blt", "name": "BLT"}, {"file": "BOWA Medical.png", "ext": "png", "id": "bowa", "name": "BOWA"}, {"file": "BRAINLAB.png", "ext": "png", "id": "brainlab", "name": "BRAINLAB"}, {"file": "CEFAR COMPEX.png", "ext": "png", "id": "cefar-compex", "name": "CEFAR COMPEX"}, {"file": "CELITRON.png", "ext": "png", "id": "celitron", "name": "CELITRON"}, {"file": "CHOYANG.jpg", "ext": "jpg", "id": "choyang", "name": "CHOYANG"}, {"file": "COMEN.jpg", "ext": "jpg", "id": "comen", "name": "COMEN"}, {"file": "CONMED.png", "ext": "png", "id": "conmed", "name": "CONMED"}, {"file": "COVIDIEN.png", "ext": "png", "id": "covidien", "name": "COVIDIEN"}, {"file": "CREATIVE.png", "ext": "png", "id": "creative", "name": "CREATIVE"}, {"file": "DANMEDICS.png", "ext": "png", "id": "danmedics", "name": "DANMEDICS"}, {"file": "DEPUY SYNTHES.jpg", "ext": "jpg", "id": "depuy-synthes", "name": "DEPUY SYNTHES"}, {"file": "DESSILONS.png", "ext": "png", "id": "dessilons", "name": "DESSILONS"}, {"file": "DMS.png", "ext": "png", "id": "dms", "name": "DMS"}, {"file": "DRAGER.png", "ext": "png", "id": "drager", "name": "DRAGER"}, {"file": "DS MAREEF.png", "ext": "png", "id": "ds-mareef", "name": "DS MAREEF"}, {"file": "EBERLE.png", "ext": "png", "id": "eberle", "name": "EBERLE"}, {"file": "EDAN.png", "ext": "png", "id": "edan", "name": "EDAN"}, {"file": "ELPIS.jpg", "ext": "jpg", "id": "elips", "name": "ELIPS"}, {"file": "EMS.png", "ext": "png", "id": "ems", "name": "EMS"}, {"file": "FAZZINI.jpg", "ext": "jpg", "id": "fazzini", "name": "FAZZINI"}, {"file": "FRESENIUS.png", "ext": "png", "id": "fresenius", "name": "FRESENIUS"}, {"file": "Firstmed.png", "ext": "png", "id": "firstmed", "name": "FIRSTMED"}, {"file": "GIOTTO.png", "ext": "png", "id": "giotto", "name": "GIOTTO"}, {"file": "GMM.png", "ext": "png", "id": "gmm", "name": "GMM"}, {"file": "Getemed.png", "ext": "png", "id": "getemed", "name": "GETEMED"}, {"file": "HERSILL.png", "ext": "png", "id": "hersill", "name": "HERSILL"}, {"file": "ILO Electronic.png", "ext": "png", "id": "ilo", "name": "ILO"}, {"file": "Integra.png", "ext": "png", "id": "integra", "name": "INTEGRA"}, {"file": "Jiangsu Huida.png", "ext": "png", "id": "huidamed", "name": "HUIDAMED"}, {"file": "KaWe.png", "ext": "png", "id": "kawe", "name": "KAWE"}, {"file": "Liebherr Medical.png", "ext": "png", "id": "libherr", "name": "LIBHERR"}, {"file": "Lifotronic.png", "ext": "png", "id": "lifotronic", "name": "LIFOTRONIC"}, {"file": "Linea Life.jpg", "ext": "jpg", "id": "linea-life", "name": "LINEA LIFE"}, {"file": "Loewenstein.jpg", "ext": "jpg", "id": "lowentein", "name": "LOWENTEIN"}, {"file": "MCM.png", "ext": "png", "id": "mcm", "name": "MCM"}, {"file": "Medcaptain.png", "ext": "png", "id": "medcaptain", "name": "MEDCAPTAIN"}, {"file": "Metaltronica.jpg", "ext": "jpg", "id": "metaltronic", "name": "METALTRONIC"}, {"file": "Nihon Kohden.png", "ext": "png", "id": "nihon-koden", "name": "NIHON KODEN"}, {"file": "Nouvag AG.png", "ext": "png", "id": "novag", "name": "NOVAG"}, {"file": "REDA.png", "ext": "png", "id": "reda", "name": "REDA"}, {"file": "RZ-Medizintechnik.png", "ext": "png", "id": "rz-medizin", "name": "RZ-MEDIZIN"}, {"file": "SIRIUSMED.png", "ext": "png", "id": "sirusmed", "name": "SIRUSMED"}, {"file": "Smith & Nephew.png", "ext": "png", "id": "smith-nephew", "name": "SMITH & NEPHEW"}, {"file": "Surgicon.png", "ext": "png", "id": "surgicon", "name": "SURGICON"}, {"file": "Teleflex.png", "ext": "png", "id": "teleflex", "name": "TELEFLEX"}, {"file": "a2.jpg", "ext": "jpg", "id": "a2-medical", "name": "A2 MEDICAL"}, {"file": "aeonmed.jpg", "ext": "jpg", "id": "aeonmed", "name": "AEONMED"}, {"file": "bbraun.png", "ext": "png", "id": "brawn", "name": "BRAWN"}, {"file": "bmc.jpg", "ext": "jpg", "id": "bmc-medical", "name": "BMC MEDICAL"}, {"file": "bmk.png", "ext": "png", "id": "bmk", "name": "BMK"}, {"file": "capnomed.jpg", "ext": "jpg", "id": "capnomed", "name": "CAPNOMED"}, {"file": "endolook.png", "ext": "png", "id": "endolook", "name": "ENDOLOOK"}, {"file": "enmind.png", "ext": "png", "id": "enmind", "name": "ENMIND"}, {"file": "erbe.png", "ext": "png", "id": "erbe", "name": "ERBE"}, {"file": "famed.png", "ext": "png", "id": "famed", "name": "FAMED"}, {"file": "fujifilm.png", "ext": "png", "id": "fujifilm", "name": "FUJIFILM"}, {"file": "ge healthcare.png", "ext": "png", "id": "ge", "name": "GE"}, {"file": "genoray.png", "ext": "png", "id": "genoray", "name": "GENORAY"}, {"file": "hanlim.jpg", "ext": "jpg", "id": "hanlim", "name": "HANLIM"}, {"file": "hawkmed.png", "ext": "png", "id": "hawkmed", "name": "HAWKMED"}, {"file": "hermann.png", "ext": "png", "id": "hermann", "name": "HERMANN"}, {"file": "heyer.png", "ext": "png", "id": "heyer", "name": "HEYER"}, {"file": "hillrom.png", "ext": "png", "id": "hillrom", "name": "HILLROM"}, {"file": "hitachi.jpg", "ext": "jpg", "id": "hitachi", "name": "HITACHI"}, {"file": "hologic.png", "ext": "png", "id": "hologic", "name": "HOLOGIC"}, {"file": "holtex.png", "ext": "png", "id": "holtex", "name": "HOLTEX"}, {"file": "innomed.png", "ext": "png", "id": "innomed", "name": "INNOMED"}, {"file": "inomed.png", "ext": "png", "id": "inomed", "name": "INOMED"}, {"file": "italray.png", "ext": "png", "id": "italray", "name": "ITALRAY"}, {"file": "konsung.png", "ext": "png", "id": "konsung", "name": "KONSUNG"}, {"file": "lawton.png", "ext": "png", "id": "lawton", "name": "LAWTON"}, {"file": "linet.png", "ext": "png", "id": "linet", "name": "LINET"}, {"file": "magnamed.png", "ext": "png", "id": "magnamed", "name": "MAGNAMED"}, {"file": "maquet.jpg", "ext": "jpg", "id": "maquet", "name": "MAQUET"}, {"file": "medifa.png", "ext": "png", "id": "medifa", "name": "MEDIFA"}, {"file": "medtronic.png", "ext": "png", "id": "medtronic", "name": "MEDTRONIC"}, {"file": "mespa medikal.png", "ext": "png", "id": "mespa", "name": "MESPA"}, {"file": "mespa medikal.png", "ext": "png", "id": "medikal", "name": "MEDIKAL"}, {"file": "microaire.png", "ext": "png", "id": "microaire", "name": "MICROAIRE"}, {"file": "mindray.png", "ext": "png", "id": "mindray", "name": "MINDRAY"}, {"file": "nitrocare.png", "ext": "png", "id": "nitrocare", "name": "NITROCARE"}, {"file": "nopa.png", "ext": "png", "id": "nopa", "name": "NOPA"}, {"file": "olympus.png", "ext": "png", "id": "olympus", "name": "OLYMPUS"}, {"file": "osteosys.png", "ext": "png", "id": "osteosys", "name": "OSTEOSYS"}, {"file": "perlove.png", "ext": "png", "id": "perlove", "name": "PERLOVE"}, {"file": "philips.png", "ext": "png", "id": "philips", "name": "PHILIPS"}, {"file": "precisoin.png", "ext": "png", "id": "precision", "name": "PRECISION"}, {"file": "primedic.png", "ext": "png", "id": "primedic", "name": "PRIMEDIC"}, {"file": "resmedpng", "ext": "png", "id": "resmed", "name": "RESMED"}, {"file": "richard wolf.png", "ext": "png", "id": "wolf", "name": "WOLF"}, {"file": "riester.png", "ext": "png", "id": "riester", "name": "RIESTER"}, {"file": "ruide.jpg", "ext": "jpg", "id": "ruidi", "name": "RUIDI"}, {"file": "samsung.png", "ext": "png", "id": "samsung", "name": "SAMSUNG"}, {"file": "schiller.png", "ext": "png", "id": "schiller", "name": "SCHILLER"}, {"file": "schroeter.png", "ext": "png", "id": "schroder", "name": "SCHRODER"}, {"file": "siare.png", "ext": "png", "id": "siare", "name": "SIARE"}, {"file": "siemens-healthineers.png", "ext": "png", "id": "siemens", "name": "SIEMENS"}, {"file": "sinomdt.png", "ext": "png", "id": "sinomdt", "name": "SINOMDT"}, {"file": "soring.png", "ext": "png", "id": "soring", "name": "SORING"}, {"file": "stephanix.png", "ext": "png", "id": "stephanix", "name": "STEPHANIX"}, {"file": "tni.png", "ext": "png", "id": "tni", "name": "TNI"}, {"file": "tontarra.png", "ext": "png", "id": "tontarra", "name": "TONTARRA"}, {"file": "villa.jpg", "ext": "jpg", "id": "villa", "name": "VILLA"}, {"file": "viscomed.png", "ext": "png", "id": "visco", "name": "VISCO"}, {"file": "weinmann.png", "ext": "png", "id": "weinmann", "name": "WEINMANN"}];
+var NO_PHOTO_BRANDS = [{"id": "axent", "name": "AXENT"}, {"id": "b105", "name": "B105"}, {"id": "b125", "name": "B125"}, {"id": "bair-hugger", "name": "BAIR HUGGER"}, {"id": "biomed", "name": "BIOMED"}, {"id": "chine", "name": "CHINE"}, {"id": "depy", "name": "DEPY"}, {"id": "dgm", "name": "DGM"}, {"id": "divers", "name": "DIVERS"}, {"id": "dms-stratos", "name": "DMS STRATOS"}, {"id": "f-p", "name": "F&P"}, {"id": "falco-evo", "name": "FALCO EVO"}, {"id": "herman", "name": "HERMAN"}, {"id": "optium", "name": "OPTIUM"}, {"id": "osiris", "name": "OSIRIS"}, {"id": "precisa", "name": "PRECISA"}, {"id": "senocrystalnova", "name": "SENOCRYSTALNOVA"}, {"id": "siar", "name": "SIAR"}, {"id": "smam", "name": "SMAM"}, {"id": "smith", "name": "SMITH"}, {"id": "sonoscape", "name": "SONOSCAPE"}, {"id": "traveller", "name": "TRAVELLER"}, {"id": "tts", "name": "TTS"}, {"id": "yong-won", "name": "YONG WON"}, {"id": "ziehm-imagin", "name": "ZIEHM IMAGIN"}, {"id": "zimmerbiomet", "name": "ZIMMERBIOMET"}];
+var SKIP_FILES = [{"file": "Abbott.png", "reason": "aucune marque correspondante trouvée dans le catalogue"}, {"file": "GLOMEDA.png", "reason": "aucune marque correspondante trouvée dans le catalogue"}, {"file": "safemed.png", "reason": "aucune marque correspondante trouvée dans le catalogue"}, {"file": "GE healthcare .webp", "reason": "doublon de ge healthcare.png, format .webp non pris en charge par le site"}, {"file": "air_liquide.png", "reason": "doublon de AIR LIQUIDE MEDICAL SYSTEMS.jpg, déjà assigné"}, {"file": "medcaptain-log.png", "reason": "doublon de Medcaptain.png, déjà assigné"}];
+
+var cfg = (window.VERIDIAN_CONFIG || {}).supabase;
+var client = window.supabase.createClient(cfg.url, cfg.anonKey);
+
+function extFromName(name){
+  var m = /\.([a-z0-9]+)$/i.exec(name);
+  return m ? m[1].toLowerCase() : '';
+}
+
+document.getElementById('admin-login-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  var email = document.getElementById('admin-email').value.trim();
+  var password = document.getElementById('admin-password').value;
+  var errEl = document.getElementById('admin-login-error');
+  errEl.style.display = 'none';
+  client.auth.signInWithPassword({ email: email, password: password }).then(function(res){
+    if(res.error){ errEl.textContent = res.error.message; errEl.style.display = 'block'; return; }
+    document.getElementById('admin-login').style.display = 'none';
+    document.getElementById('bp-app').style.display = 'block';
+    renderLists();
+  });
+});
+
+function rowHtml(idx, file, name, brandId){
+  return (
+    '<div class="bp-row" data-idx="'+idx+'">'+
+      '<img src="/pictures/brands/'+encodeURIComponent(file)+'" alt="">'+
+      '<div class="name"><b>'+name+'</b><span>'+file+' → '+brandId+'.'+extFromName(file || '')+'</span></div>'+
+      '<div class="bp-status pending">En attente</div>'+
+    '</div>'
+  );
+}
+
+function renderLists(){
+  var list = document.getElementById('bp-list');
+  list.innerHTML = MATCHED.map(function(m, i){ return rowHtml(i, m.file, m.name, m.id); }).join('');
+
+  var skipList = document.getElementById('bp-skip-list');
+  skipList.innerHTML = SKIP_FILES.map(function(s, i){
+    var isRealFile = s.reason.indexOf('doublon') === -1;
+    var options = '<option value="">— Ignorer —</option>' + NO_PHOTO_BRANDS.map(function(b){
+      return '<option value="'+b.id+'">'+b.name+'</option>';
+    }).join('');
+    return (
+      '<div class="bp-row bp-skip" data-skip-idx="'+i+'">'+
+        (isRealFile ? '<img src="/pictures/brands/'+encodeURIComponent(s.file)+'" alt="">' : '<div style="width:44px"></div>')+
+        '<div class="name"><b>'+s.file+'</b><span>'+s.reason+'</span></div>'+
+        (isRealFile ? '<select class="bp-select" data-skip-select="'+i+'">'+options+'</select>' : '<span class="bp-status">Doublon</span>')+
+      '</div>'
+    );
+  }).join('');
+}
+
+function uploadOne(file, ext, id){
+  return fetch('/pictures/brands/'+encodeURIComponent(file)).then(function(r){
+    if(!r.ok) throw new Error('fichier local introuvable');
+    return r.blob();
+  }).then(function(blob){
+    var contentType = ext === 'jpg' ? 'image/jpeg' : 'image/png';
+    return client.storage.from('brand-photos').upload(id+'.'+ext, blob, { upsert: true, contentType: contentType });
+  });
+}
+
+document.getElementById('bp-upload-all').addEventListener('click', function(){
+  var btn = this;
+  btn.disabled = true;
+  var rows = MATCHED.slice();
+  document.querySelectorAll('#bp-skip-list [data-skip-select]').forEach(function(sel){
+    var val = sel.value;
+    if(val){
+      var i = parseInt(sel.getAttribute('data-skip-select'), 10);
+      var s = SKIP_FILES[i];
+      var brand = NO_PHOTO_BRANDS.filter(function(b){ return b.id === val; })[0];
+      rows.push({ file: s.file, ext: extFromName(s.file), id: val, name: brand ? brand.name : val });
+    }
+  });
+  var progressEl = document.getElementById('bp-progress');
+  var done = 0, ok = 0, fail = 0;
+  function next(i){
+    if(i >= rows.length){
+      progressEl.textContent = 'Terminé : ' + ok + ' envoyées, ' + fail + ' échecs.';
+      btn.disabled = false;
+      return;
+    }
+    var m = rows[i];
+    var rowEl = document.querySelector('.bp-row[data-idx="'+i+'"]') || null;
+    var statusEl = rowEl ? rowEl.querySelector('.bp-status') : null;
+    if(statusEl){ statusEl.textContent = 'Envoi…'; statusEl.className = 'bp-status pending'; }
+    uploadOne(m.file, m.ext, m.id).then(function(res){
+      done++;
+      if(res.error){ fail++; if(statusEl){ statusEl.textContent = 'Erreur'; statusEl.className = 'bp-status err'; statusEl.title = res.error.message; } }
+      else { ok++; if(statusEl){ statusEl.textContent = 'Envoyée'; statusEl.className = 'bp-status ok'; } }
+      progressEl.textContent = done + ' / ' + rows.length + ' — ' + ok + ' ok, ' + fail + ' échecs';
+      next(i+1);
+    }).catch(function(e){
+      done++; fail++;
+      if(statusEl){ statusEl.textContent = 'Erreur'; statusEl.className = 'bp-status err'; statusEl.title = e.message; }
+      progressEl.textContent = done + ' / ' + rows.length + ' — ' + ok + ' ok, ' + fail + ' échecs';
+      next(i+1);
+    });
+  }
+  document.getElementById('bp-count-pending').textContent = rows.length;
+  next(0);
+});
+</script>
+</body>
+</html>
