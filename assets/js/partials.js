@@ -6,10 +6,22 @@
      window.ALT_LANG_URL = "/fr/..."  (equivalent page in the other language)
    ========================================================================== */
 (function(){
-  function injectPartial(url, mountId, done){
+  function injectPartial(url, mountId, done, unwrap){
     fetch(url).then(function(r){ return r.text(); }).then(function(html){
       var mount = document.getElementById(mountId);
-      if(mount){ mount.innerHTML = html; }
+      if(mount){
+        if(unwrap){
+          /* The header must be a direct child of <body>, not a small wrapper
+             div sized to its own content -- position:sticky only stays
+             pinned while scrolling through its parent's box, so a wrapper
+             barely taller than the header itself made it un-stick and
+             scroll away after ~1 header-height of scrolling. */
+          mount.insertAdjacentHTML('afterend', html);
+          mount.remove();
+        } else {
+          mount.innerHTML = html;
+        }
+      }
       if(done) done();
     }).catch(function(){ /* silent — page still usable without chrome on file:// */ });
   }
@@ -74,7 +86,7 @@
 
   veridianOnReady(function(){
     var lang = window.PAGE_LANG || "en";
-    injectPartial('/partials/header-'+lang+'.html', 'site-header-slot', initHeader);
+    injectPartial('/partials/header-'+lang+'.html', 'site-header-slot', initHeader, true);
     injectPartial('/partials/footer-'+lang+'.html', 'site-footer-slot', initFooter);
   });
 })();

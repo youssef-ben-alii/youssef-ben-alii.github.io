@@ -165,20 +165,33 @@ button.text-link:hover{color:var(--navy-950)}
 
 /* ---------- Hero ---------- */
 .hero{position:relative;background:var(--band);color:#fff;overflow:hidden;padding:0}
-.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center;padding:60px 0 56px}
+.hero-grid{position:relative;z-index:3;display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center;padding:60px 0 56px}
 .hero .eyebrow{color:var(--on-band)}
 .hero h1{color:#fff;margin-top:14px}
 .hero .lede{color:rgba(255,255,255,.72);margin-top:20px}
 .hero .actions{display:flex;gap:14px;margin-top:36px;flex-wrap:wrap}
 .hero-visual{position:relative;aspect-ratio:4/3;max-height:340px;margin-left:auto;width:100%;border-radius:var(--radius-m);overflow:hidden}
-.hero-bg-fx{position:absolute;inset:0;background:
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.hero-tint{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg, rgba(2,54,123,.62), rgba(2,54,123,.82));pointer-events:none}
+.hero-bg-fx{position:absolute;inset:0;z-index:2;background:
   radial-gradient(60% 50% at 80% 10%, rgba(74,139,201,.35), transparent 60%),
   radial-gradient(50% 60% at 0% 100%, rgba(74,139,201,.18), transparent 60%);
   pointer-events:none;
 }
+/* Home page only: hero video runs behind the header, which starts
+   transparent at the very top of the page and reverts to its normal
+   opaque look as soon as scrolling begins (.is-scrolled, toggled in
+   partials.js). Pulling the hero up by the header's own height (and
+   padding it back down) lets the video show through instead of leaving
+   a gap. */
+body.page-home #site-header{background:transparent;border-bottom-color:transparent;box-shadow:none;backdrop-filter:none}
+body.page-home #site-header.is-scrolled{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom-color:var(--line-soft)}
+body.page-home .hero{margin-top:-84px}
+body.page-home .hero-grid{padding-top:calc(60px + 84px)}
 @media (max-width:900px){
   .hero-grid{grid-template-columns:1fr;padding:56px 0 48px}
   .hero-visual{aspect-ratio:16/10;order:-1;margin-bottom:32px}
+  body.page-home .hero-grid{padding-top:calc(56px + 84px)}
 }
 
 /* Hero logo mark: the wordmark recreated in-page (not the header's raster
