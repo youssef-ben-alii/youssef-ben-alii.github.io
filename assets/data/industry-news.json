@@ -1,13 +1,6 @@
 {
-   "generatedAt" : "2026-10-16T09:16:40Z",
+   "generatedAt" : "2026-10-17T08:47:18Z",
    "items" : [
-      {
-         "date" : "2026-02-25",
-         "excerpt" : "The Director-General of the World Health Organization, Dr Tedros Adhanom Ghebreyesus, today concluded the first day of his two-day State visit to the Hashemite Kingdom of Jordan, underscoring the s...",
-         "source" : "WHO",
-         "title" : "WHO Director-General visits Jordan to recognize strong collaboration on health system delivery, emergency relief and advancing mental health",
-         "url" : "https://www.who.int/news/item/25-02-2026-who-director-general-visits-jordan-to-recognize-strong-collaboration-on-health-system-delivery--emergency-relief-and-advancing-mental-health"
-      },
       {
          "date" : "2026-01-24",
          "excerpt" : "WHO regrets the United States’ notification of withdrawal from WHO – a decision that makes both the United States and the world less safe. The notification of withdrawal raises issues that will be ...",
@@ -16,18 +9,25 @@
          "url" : "https://www.who.int/news/item/24-01-2026-who-statement-on-notification-of-withdrawal-of-the-united-states"
       },
       {
-         "date" : "2025-07-30",
-         "excerpt" : "Tribute to Dr David Nabarro",
-         "source" : "WHO",
-         "title" : "Paying tribute to David Nabarro",
-         "url" : "https://www.who.int/news/item/30-07-2025-paying-tribute-to-david-nabarro"
-      },
-      {
          "date" : "2025-07-23",
          "excerpt" : "<p>The World Health Organization (WHO) has certified Timor-Leste as malaria-free, a remarkable achievement for a country that prioritized the disease and embarked on a concerted, nation-wide respon...",
          "source" : "WHO",
          "title" : "Timor-Leste certified malaria-free by WHO",
          "url" : "https://www.who.int/news/item/24-07-2025-timor-leste-certified-malaria-free-by-who"
+      },
+      {
+         "date" : "2025-05-24",
+         "excerpt" : "<p>The World Health Organization (WHO) and the African Union (AU) Commission renewed their longstanding strategic partnership today with the signing of an updated Memorandum of Understanding (MoU) ...",
+         "source" : "WHO",
+         "title" : "African Union and World Health Organization renew strategic partnership to drive impact and strengthen health systems in Africa",
+         "url" : "https://www.who.int/news/item/24-05-2025-world-health-organization-and-african-union-renew-strategic-partnership-to-drive-impact-and-strengthen-health-systems-in-africa"
+      },
+      {
+         "date" : "2025-04-01",
+         "excerpt" : "Dr Tedros Adhanom Ghebreyesus, Director-General of the World Health Organization (WHO), and Thomas Östros, Vice-President of the European Investment Bank (EIB Global), met at the EIB Group Forum in...",
+         "source" : "WHO",
+         "title" : "Strengthening public health across Lebanon with EIB Global",
+         "url" : "https://www.who.int/news/item/06-03-2025-strengthening-public-health-across-lebanon-with-eib-global"
       }
    ]
 }
