@@ -1,6 +1,13 @@
 {
-   "generatedAt" : "2026-10-18T09:03:42Z",
+   "generatedAt" : "2026-10-19T10:15:46Z",
    "items" : [
+      {
+         "date" : "2026-10-10",
+         "excerpt" : "<h3><em></em></h3><p>Today, as part of its commitment to strengthening health information systems and improving health[1], especially in the context of the COVID-19 pandemic, WHO announced a new ap...",
+         "source" : "WHO",
+         "title" : "New WHO technical package to help countries improve health data for COVID-19 response and beyond",
+         "url" : "https://www.who.int/news/item/27-08-2020-new-who-technical-package-health-data-for-covid-19-response"
+      },
       {
          "date" : "2026-01-24",
          "excerpt" : "WHO regrets the United States’ notification of withdrawal from WHO – a decision that makes both the United States and the world less safe. The notification of withdrawal raises issues that will be ...",
@@ -21,13 +28,6 @@
          "source" : "WHO",
          "title" : "African Union and World Health Organization renew strategic partnership to drive impact and strengthen health systems in Africa",
          "url" : "https://www.who.int/news/item/24-05-2025-world-health-organization-and-african-union-renew-strategic-partnership-to-drive-impact-and-strengthen-health-systems-in-africa"
-      },
-      {
-         "date" : "2025-04-01",
-         "excerpt" : "Dr Tedros Adhanom Ghebreyesus, Director-General of the World Health Organization (WHO), and Thomas Östros, Vice-President of the European Investment Bank (EIB Global), met at the EIB Group Forum in...",
-         "source" : "WHO",
-         "title" : "Strengthening public health across Lebanon with EIB Global",
-         "url" : "https://www.who.int/news/item/06-03-2025-strengthening-public-health-across-lebanon-with-eib-global"
       }
    ]
 }
