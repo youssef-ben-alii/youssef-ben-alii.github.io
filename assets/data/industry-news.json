@@ -1,6 +1,20 @@
 {
-   "generatedAt" : "2026-11-21T12:59:02Z",
+   "generatedAt" : "2026-11-22T12:50:36Z",
    "items" : [
+      {
+         "date" : "2026-10-20",
+         "excerpt" : "The U.S. Food and Drug Administration today released final guidance establishing a clear framework for how drug companies can develop, distribute, and label apps used alongside their prescription m...",
+         "source" : "FDA",
+         "title" : "FDA Issues Final Guidance on Prescription Drug Apps and Software",
+         "url" : "https://www.fda.gov/news-events/press-announcements/fda-issues-final-guidance-prescription-drug-apps-and-software"
+      },
+      {
+         "date" : "2026-10-19",
+         "excerpt" : "The U.S. Food and Drug Administration today granted accelerated approval for a new use of the immunotherapy Jemperli (dostarlimab-gxly) that may allow some patients with locally advanced rectal can...",
+         "source" : "FDA",
+         "title" : "FDA Approves Immunotherapy That May Allow Certain Patients with Rectal Cancer to Avoid Chemotherapy, Radiation and Surgery",
+         "url" : "https://www.fda.gov/news-events/press-announcements/fda-approves-immunotherapy-may-allow-certain-patients-rectal-cancer-avoid-chemotherapy-radiation-and"
+      },
       {
          "date" : "2026-10-10",
          "excerpt" : "<h3><em></em></h3><p>Today, as part of its commitment to strengthening health information systems and improving health[1], especially in the context of the COVID-19 pandemic, WHO announced a new ap...",
